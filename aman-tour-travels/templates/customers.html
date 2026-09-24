@@ -1,0 +1,1521 @@
+{% extends "base.html" %}
+{% block title %}Customer CRM | Aman Tour & Travels{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+    <!-- ================= HEADER ================= -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                    Enterprise CRM
+                </span>
+
+                <span class="flex items-center gap-1.5 text-[10px] text-emerald-600 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live
+                </span>
+            </div>
+
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">
+                Customer Relationship Management
+            </h1>
+
+            <p class="text-xs text-slate-500 mt-1">
+                Manage travelers, enterprise clients, customer profiles and communication records.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+
+            <button
+                onclick="exportCustomers()"
+                class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3M4 20h16M5 4h14a1 1 0 011 1v10a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"/>
+                </svg>
+                Export CSV
+            </button>
+
+            <button
+                onclick="openAddCustomerModal()"
+                class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4v16m8-8H4"/>
+                </svg>
+                Add Customer
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- ================= KPI ================= -->
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Total -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                        Total Customers
+                    </p>
+
+                    <h2 id="totalCustomers"
+                        class="text-2xl font-black text-slate-900 mt-2">
+                        {{ users|length }}
+                    </h2>
+
+                    <p class="text-[10px] text-blue-600 mt-1">
+                        Customer database
+                    </p>
+                </div>
+
+                <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a4 4 0 00-4-4h-1m-3 6H6a4 4 0 01-4-4v-1a4 4 0 014-4h8a4 4 0 014 4v1a4 4 0 01-4 4zM9 8a4 4 0 100-8 4 4 0 000 8z"/>
+                    </svg>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Active -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                        Active Customers
+                    </p>
+
+                    <h2 id="activeCustomers"
+                        class="text-2xl font-black text-emerald-600 mt-2">
+                        0
+                    </h2>
+
+                    <p class="text-[10px] text-slate-500 mt-1">
+                        Currently active
+                    </p>
+                </div>
+
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    ✓
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Countries -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                        Countries
+                    </p>
+
+                    <h2 id="countryCount"
+                        class="text-2xl font-black text-indigo-600 mt-2">
+                        0
+                    </h2>
+
+                    <p class="text-[10px] text-slate-500 mt-1">
+                        Customer locations
+                    </p>
+                </div>
+
+                <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    🌍
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Filtered -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex justify-between items-start">
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                        Visible Records
+                    </p>
+
+                    <h2 id="visibleCustomers"
+                        class="text-2xl font-black text-violet-600 mt-2">
+                        {{ users|length }}
+                    </h2>
+
+                    <p class="text-[10px] text-slate-500 mt-1">
+                        Current filter result
+                    </p>
+                </div>
+
+                <div class="w-11 h-11 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
+                    ≡
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================= TOOLBAR ================= -->
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+
+            <!-- Search -->
+
+            <div class="lg:col-span-2 relative">
+
+                <svg
+                    class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+
+                <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Search name, email, phone..."
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500">
+            </div>
+
+
+            <!-- Country -->
+
+            <select
+                id="countryFilter"
+                class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium focus:outline-none focus:border-blue-500">
+
+                <option value="">All Countries</option>
+
+                {% set countries = [] %}
+
+                {% for user in users %}
+                    {% if user.country and user.country not in countries %}
+                        {% set _ = countries.append(user.country) %}
+                    {% endif %}
+                {% endfor %}
+
+                {% for country in countries|sort %}
+                    <option value="{{ country|lower }}">
+                        {{ country }}
+                    </option>
+                {% endfor %}
+
+            </select>
+
+
+            <!-- Status -->
+
+            <select
+                id="statusFilter"
+                class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium focus:outline-none focus:border-blue-500">
+
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+
+            </select>
+
+
+            <!-- Sort -->
+
+            <select
+                id="sortFilter"
+                class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-medium focus:outline-none focus:border-blue-500">
+
+                <option value="nameAsc">Name A → Z</option>
+                <option value="nameDesc">Name Z → A</option>
+                <option value="emailAsc">Email A → Z</option>
+                <option value="countryAsc">Country A → Z</option>
+
+            </select>
+
+        </div>
+
+
+        <!-- Secondary filters -->
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-slate-100">
+
+            <div class="flex flex-wrap gap-2">
+
+                <button
+                    onclick="setQuickFilter('')"
+                    class="quick-filter active px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-semibold">
+                    All
+                </button>
+
+                <button
+                    onclick="setQuickFilter('active')"
+                    class="quick-filter px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 text-[10px] font-semibold">
+                    Active
+                </button>
+
+                <button
+                    onclick="setQuickFilter('inactive')"
+                    class="quick-filter px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 text-[10px] font-semibold">
+                    Inactive
+                </button>
+
+                <button
+                    onclick="setQuickFilter('pending')"
+                    class="quick-filter px-3 py-1.5 rounded-lg bg-slate-50 text-slate-600 text-[10px] font-semibold">
+                    Pending
+                </button>
+
+            </div>
+
+            <button
+                onclick="resetFilters()"
+                class="text-[10px] font-semibold text-slate-500 hover:text-blue-600">
+                Reset Filters
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= CUSTOMER TABLE ================= -->
+
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+
+        <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+
+            <div>
+                <h2 class="text-sm font-bold text-slate-900">
+                    Customer Directory
+                </h2>
+
+                <p class="text-[10px] text-slate-500 mt-0.5">
+                    {{ users|length }} customer records synchronized
+                </p>
+            </div>
+
+            <span
+                id="resultBadge"
+                class="px-2.5 py-1 rounded-lg bg-slate-50 text-slate-500 text-[10px] font-semibold">
+                {{ users|length }} Records
+            </span>
+
+        </div>
+
+
+        {% if users %}
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-left">
+
+                <thead>
+
+                    <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500 font-bold">
+
+                        <th class="px-5 py-3">
+                            Customer
+                        </th>
+
+                        <th class="px-5 py-3">
+                            Contact
+                        </th>
+
+                        <th class="px-5 py-3">
+                            Country
+                        </th>
+
+                        <th class="px-5 py-3">
+                            Status
+                        </th>
+
+                        <th class="px-5 py-3">
+                            Joined
+                        </th>
+
+                        <th class="px-5 py-3 text-right">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="customerTable"
+                    class="divide-y divide-slate-100 text-xs">
+
+                    {% for user in users %}
+
+                    {% set customer_status = user.status or 'active' %}
+                    {% set customer_country = user.country or 'Not Set' %}
+
+                    <tr
+                        class="customer-row hover:bg-blue-50/30 transition"
+                        data-name="{{ user.name|lower }}"
+                        data-email="{{ user.email|lower }}"
+                        data-phone="{{ user.phone|lower }}"
+                        data-country="{{ customer_country|lower }}"
+                        data-status="{{ customer_status|lower }}">
+
+                        <!-- CUSTOMER -->
+
+                        <td class="px-5 py-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div
+                                    class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-xs uppercase">
+                                    {{ user.name[:1] }}
+                                </div>
+
+                                <div>
+                                    <p class="font-bold text-slate-900">
+                                        {{ user.name }}
+                                    </p>
+
+                                    <p class="text-[10px] text-slate-400">
+                                        Customer ID #{{ loop.index }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- CONTACT -->
+
+                        <td class="px-5 py-4">
+
+                            <div class="space-y-1">
+
+                                <div class="flex items-center gap-2">
+
+                                    <span class="text-slate-700">
+                                        {{ user.email }}
+                                    </span>
+
+                                    <button
+                                        onclick="copyText('{{ user.email }}')"
+                                        title="Copy email"
+                                        class="text-slate-400 hover:text-blue-600">
+                                        ⧉
+                                    </button>
+
+                                </div>
+
+                                <div class="text-[10px] text-slate-400">
+                                    {{ user.phone or 'No phone number' }}
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- COUNTRY -->
+
+                        <td class="px-5 py-4">
+
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-semibold text-slate-600">
+
+                                🌍
+                                {{ customer_country }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td class="px-5 py-4">
+
+                            {% if customer_status|lower == 'active' %}
+
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-bold">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                Active
+                            </span>
+
+                            {% elif customer_status|lower == 'pending' %}
+
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-bold">
+                                <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                Pending
+                            </span>
+
+                            {% else %}
+
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-500 rounded-lg text-[10px] font-bold">
+                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                Inactive
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- DATE -->
+
+                        <td class="px-5 py-4 text-slate-500">
+
+                            {{ user.created_at or '—' }}
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td class="px-5 py-4">
+
+                            <div class="flex justify-end gap-1">
+
+                                <button
+                                    onclick="viewCustomer(this)"
+                                    class="w-8 h-8 rounded-lg hover:bg-blue-50 text-slate-500 hover:text-blue-600 transition"
+                                    title="View">
+                                    👁
+                                </button>
+
+                                <button
+                                    onclick="editCustomer(this)"
+                                    class="w-8 h-8 rounded-lg hover:bg-amber-50 text-slate-500 hover:text-amber-600 transition"
+                                    title="Edit">
+                                    ✎
+                                </button>
+
+                                <button
+                                    onclick="deleteCustomer(this)"
+                                    class="w-8 h-8 rounded-lg hover:bg-red-50 text-slate-500 hover:text-red-600 transition"
+                                    title="Delete">
+                                    🗑
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- NO FILTER RESULT -->
+
+        <div
+            id="noResults"
+            class="hidden py-14 text-center">
+
+            <div class="text-4xl mb-3">
+                🔎
+            </div>
+
+            <h3 class="font-bold text-slate-800 text-sm">
+                No customers found
+            </h3>
+
+            <p class="text-xs text-slate-500 mt-1">
+                Try changing your search or filters.
+            </p>
+
+            <button
+                onclick="resetFilters()"
+                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold">
+                Clear Filters
+            </button>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- EMPTY DATABASE -->
+
+        <div class="py-20 text-center">
+
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl mx-auto flex items-center justify-center text-2xl">
+                👥
+            </div>
+
+            <h3 class="text-sm font-bold text-slate-900 mt-4">
+                No Customer Records
+            </h3>
+
+            <p class="text-xs text-slate-500 mt-1">
+                Start building your customer database.
+            </p>
+
+            <button
+                onclick="openAddCustomerModal()"
+                class="mt-5 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold">
+                Add First Customer
+            </button>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- CUSTOMER DETAILS MODAL -->
+<!-- ===================================================== -->
+
+<div
+    id="customerModal"
+    class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+
+    <div
+        class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+
+        <div class="px-6 py-5 border-b border-slate-200 flex justify-between">
+
+            <div>
+                <h2 id="modalTitle"
+                    class="text-lg font-bold text-slate-900">
+                    Customer Details
+                </h2>
+
+                <p class="text-[10px] text-slate-500">
+                    Customer profile information
+                </p>
+            </div>
+
+            <button
+                onclick="closeModal()"
+                class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500">
+                ✕
+            </button>
+
+        </div>
+
+        <div id="modalContent"
+            class="p-6">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- ADD CUSTOMER MODAL -->
+<!-- ===================================================== -->
+
+<div
+    id="addCustomerModal"
+    class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+
+    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl">
+
+        <div class="px-6 py-5 border-b border-slate-200 flex justify-between">
+
+            <div>
+                <h2 class="text-lg font-bold text-slate-900">
+                    Add Customer
+                </h2>
+
+                <p class="text-[10px] text-slate-500">
+                    Create a new customer record
+                </p>
+            </div>
+
+            <button
+                onclick="closeAddCustomerModal()"
+                class="w-8 h-8 rounded-lg hover:bg-slate-100">
+                ✕
+            </button>
+
+        </div>
+
+
+        <form
+            id="customerForm"
+            class="p-6 space-y-4">
+
+            <div>
+
+                <label class="text-[10px] font-bold text-slate-500 uppercase">
+                    Full Name
+                </label>
+
+                <input
+                    id="newName"
+                    required
+                    type="text"
+                    class="mt-1 w-full border border-slate-200 bg-slate-50 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-500"
+                    placeholder="Enter customer name">
+
+            </div>
+
+
+            <div>
+
+                <label class="text-[10px] font-bold text-slate-500 uppercase">
+                    Email
+                </label>
+
+                <input
+                    id="newEmail"
+                    required
+                    type="email"
+                    class="mt-1 w-full border border-slate-200 bg-slate-50 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-500"
+                    placeholder="customer@example.com">
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <div>
+
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">
+                        Phone
+                    </label>
+
+                    <input
+                        id="newPhone"
+                        type="text"
+                        class="mt-1 w-full border border-slate-200 bg-slate-50 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-500"
+                        placeholder="+91">
+
+                </div>
+
+
+                <div>
+
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">
+                        Country
+                    </label>
+
+                    <input
+                        id="newCountry"
+                        type="text"
+                        class="mt-1 w-full border border-slate-200 bg-slate-50 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-500"
+                        placeholder="India">
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <label class="text-[10px] font-bold text-slate-500 uppercase">
+                    Status
+                </label>
+
+                <select
+                    id="newStatus"
+                    class="mt-1 w-full border border-slate-200 bg-slate-50 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-500">
+
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="flex justify-end gap-2 pt-3">
+
+                <button
+                    type="button"
+                    onclick="closeAddCustomerModal()"
+                    class="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold">
+                    Create Customer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("searchInput");
+    const countryFilter = document.getElementById("countryFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const sortFilter = document.getElementById("sortFilter");
+
+    if (searchInput) searchInput.addEventListener("input", applyFilters);
+    if (countryFilter) countryFilter.addEventListener("change", applyFilters);
+    if (statusFilter) statusFilter.addEventListener("change", applyFilters);
+    if (sortFilter) sortFilter.addEventListener("change", applyFilters);
+
+    updateStats();
+
+});
+
+
+/* ================= FILTER ================= */
+
+function applyFilters() {
+
+    const search =
+        document.getElementById("searchInput").value.toLowerCase().trim();
+
+    const country =
+        document.getElementById("countryFilter").value.toLowerCase();
+
+    const status =
+        document.getElementById("statusFilter").value.toLowerCase();
+
+    const rows =
+        Array.from(document.querySelectorAll(".customer-row"));
+
+    let visible = [];
+
+    rows.forEach(row => {
+
+        const name = row.dataset.name || "";
+        const email = row.dataset.email || "";
+        const phone = row.dataset.phone || "";
+        const rowCountry = row.dataset.country || "";
+        const rowStatus = row.dataset.status || "";
+
+        const searchMatch =
+            !search ||
+            name.includes(search) ||
+            email.includes(search) ||
+            phone.includes(search) ||
+            rowCountry.includes(search);
+
+        const countryMatch =
+            !country || rowCountry === country;
+
+        const statusMatch =
+            !status || rowStatus === status;
+
+        const show =
+            searchMatch &&
+            countryMatch &&
+            statusMatch;
+
+        row.style.display = show ? "" : "none";
+
+        if (show) visible.push(row);
+
+    });
+
+
+    sortRows(visible);
+
+    document.getElementById("visibleCustomers").textContent =
+        visible.length;
+
+    document.getElementById("resultBadge").textContent =
+        visible.length + " Records";
+
+    document.getElementById("noResults").classList.toggle(
+        "hidden",
+        visible.length !== 0
+    );
+
+}
+
+
+/* ================= SORT ================= */
+
+function sortRows(rows) {
+
+    const sort =
+        document.getElementById("sortFilter").value;
+
+    rows.sort((a, b) => {
+
+        let valueA;
+        let valueB;
+
+        if (sort === "nameDesc") {
+
+            valueA = a.dataset.name;
+            valueB = b.dataset.name;
+
+        } else if (sort === "emailAsc") {
+
+            valueA = a.dataset.email;
+            valueB = b.dataset.email;
+
+        } else if (sort === "countryAsc") {
+
+            valueA = a.dataset.country;
+            valueB = b.dataset.country;
+
+        } else {
+
+            valueA = a.dataset.name;
+            valueB = b.dataset.name;
+
+        }
+
+        return valueA.localeCompare(valueB);
+
+    });
+
+    const table = document.getElementById("customerTable");
+
+    rows.forEach(row => table.appendChild(row));
+
+}
+
+
+/* ================= QUICK FILTER ================= */
+
+function setQuickFilter(status) {
+
+    document.getElementById("statusFilter").value = status;
+
+    document.querySelectorAll(".quick-filter").forEach(btn => {
+
+        btn.classList.remove(
+            "bg-blue-50",
+            "text-blue-600"
+        );
+
+        btn.classList.add(
+            "bg-slate-50",
+            "text-slate-600"
+        );
+
+    });
+
+    event.currentTarget.classList.remove(
+        "bg-slate-50",
+        "text-slate-600"
+    );
+
+    event.currentTarget.classList.add(
+        "bg-blue-50",
+        "text-blue-600"
+    );
+
+    applyFilters();
+
+}
+
+
+/* ================= RESET ================= */
+
+function resetFilters() {
+
+    document.getElementById("searchInput").value = "";
+    document.getElementById("countryFilter").value = "";
+    document.getElementById("statusFilter").value = "";
+    document.getElementById("sortFilter").value = "nameAsc";
+
+    applyFilters();
+
+}
+
+
+/* ================= STATS ================= */
+
+function updateStats() {
+
+    const rows =
+        document.querySelectorAll(".customer-row");
+
+    const countries = new Set();
+
+    let active = 0;
+
+    rows.forEach(row => {
+
+        countries.add(row.dataset.country);
+
+        if (row.dataset.status === "active") {
+            active++;
+        }
+
+    });
+
+    document.getElementById("activeCustomers").textContent =
+        active;
+
+    document.getElementById("countryCount").textContent =
+        countries.size;
+
+}
+
+
+/* ================= COPY ================= */
+
+function copyText(text) {
+
+    navigator.clipboard.writeText(text);
+
+    showToast("Copied to clipboard");
+
+}
+
+
+/* ================= VIEW CUSTOMER ================= */
+
+function viewCustomer(button) {
+
+    const row = button.closest("tr");
+
+    const name =
+        row.dataset.name;
+
+    const email =
+        row.dataset.email;
+
+    const phone =
+        row.dataset.phone;
+
+    const country =
+        row.dataset.country;
+
+    const status =
+        row.dataset.status;
+
+    document.getElementById("modalContent").innerHTML = `
+
+        <div class="space-y-5">
+
+            <div class="flex items-center gap-4">
+
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-lg font-black uppercase">
+                    ${name.charAt(0)}
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 capitalize">
+                        ${name}
+                    </h3>
+
+                    <p class="text-xs text-slate-500">
+                        Customer Profile
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-[9px] uppercase font-bold text-slate-400">
+                        Email
+                    </p>
+                    <p class="text-xs font-semibold text-slate-700 mt-1 break-all">
+                        ${email}
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-[9px] uppercase font-bold text-slate-400">
+                        Phone
+                    </p>
+                    <p class="text-xs font-semibold text-slate-700 mt-1">
+                        ${phone || "Not provided"}
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-[9px] uppercase font-bold text-slate-400">
+                        Country
+                    </p>
+                    <p class="text-xs font-semibold text-slate-700 mt-1 capitalize">
+                        ${country || "Not set"}
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <p class="text-[9px] uppercase font-bold text-slate-400">
+                        Status
+                    </p>
+                    <p class="text-xs font-semibold text-emerald-600 mt-1 capitalize">
+                        ${status}
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="flex gap-2">
+
+                <button
+                    onclick="copyText('${email}')"
+                    class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold">
+                    Copy Email
+                </button>
+
+                <button
+                    onclick="closeModal()"
+                    class="px-5 py-2.5 bg-slate-100 rounded-xl text-xs font-semibold">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    document.getElementById("customerModal")
+        .classList.remove("hidden");
+
+    document.getElementById("customerModal")
+        .classList.add("flex");
+
+}
+
+
+/* ================= EDIT ================= */
+
+function editCustomer(button) {
+
+    const row = button.closest("tr");
+
+    const name = row.dataset.name;
+    const email = row.dataset.email;
+    const phone = row.dataset.phone;
+    const country = row.dataset.country;
+
+    document.getElementById("modalContent").innerHTML = `
+
+        <div class="space-y-4">
+
+            <div>
+                <label class="text-[10px] font-bold text-slate-500">
+                    Customer Name
+                </label>
+
+                <input
+                    value="${name}"
+                    class="edit-field w-full mt-1 border border-slate-200 rounded-xl px-3 py-2.5 text-xs">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold text-slate-500">
+                    Email
+                </label>
+
+                <input
+                    value="${email}"
+                    class="edit-field w-full mt-1 border border-slate-200 rounded-xl px-3 py-2.5 text-xs">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold text-slate-500">
+                    Phone
+                </label>
+
+                <input
+                    value="${phone}"
+                    class="edit-field w-full mt-1 border border-slate-200 rounded-xl px-3 py-2.5 text-xs">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold text-slate-500">
+                    Country
+                </label>
+
+                <input
+                    value="${country}"
+                    class="edit-field w-full mt-1 border border-slate-200 rounded-xl px-3 py-2.5 text-xs">
+            </div>
+
+            <div class="flex justify-end gap-2">
+
+                <button
+                    onclick="closeModal()"
+                    class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-semibold">
+                    Cancel
+                </button>
+
+                <button
+                    onclick="saveEditedCustomer()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    document.getElementById("customerModal")
+        .classList.remove("hidden");
+
+    document.getElementById("customerModal")
+        .classList.add("flex");
+
+}
+
+
+/* ================= SAVE EDIT ================= */
+
+function saveEditedCustomer() {
+
+    showToast("Customer changes saved");
+
+    closeModal();
+
+}
+
+
+/* ================= DELETE ================= */
+
+function deleteCustomer(button) {
+
+    const row = button.closest("tr");
+
+    const name =
+        row.dataset.name;
+
+    const confirmed =
+        confirm(
+            `Are you sure you want to delete ${name}?`
+        );
+
+    if (!confirmed) return;
+
+    row.remove();
+
+    updateStats();
+
+    applyFilters();
+
+    showToast("Customer removed successfully");
+
+}
+
+
+/* ================= ADD CUSTOMER ================= */
+
+function openAddCustomerModal() {
+
+    document.getElementById("addCustomerModal")
+        .classList.remove("hidden");
+
+    document.getElementById("addCustomerModal")
+        .classList.add("flex");
+
+}
+
+
+function closeAddCustomerModal() {
+
+    document.getElementById("addCustomerModal")
+        .classList.add("hidden");
+
+    document.getElementById("addCustomerModal")
+        .classList.remove("flex");
+
+}
+
+
+document.getElementById("customerForm")
+    ?.addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        const name =
+            document.getElementById("newName").value;
+
+        const email =
+            document.getElementById("newEmail").value;
+
+        const phone =
+            document.getElementById("newPhone").value;
+
+        const country =
+            document.getElementById("newCountry").value;
+
+        const status =
+            document.getElementById("newStatus").value;
+
+        /*
+         * Frontend demo insertion.
+         * Replace this section with fetch('/api/customers', {...})
+         * when your FastAPI POST endpoint is ready.
+         */
+
+        const tbody =
+            document.getElementById("customerTable");
+
+        if (!tbody) return;
+
+        const row =
+            document.createElement("tr");
+
+        row.className =
+            "customer-row hover:bg-blue-50/30 transition";
+
+        row.dataset.name =
+            name.toLowerCase();
+
+        row.dataset.email =
+            email.toLowerCase();
+
+        row.dataset.phone =
+            phone.toLowerCase();
+
+        row.dataset.country =
+            country.toLowerCase();
+
+        row.dataset.status =
+            status.toLowerCase();
+
+        row.innerHTML = `
+
+            <td class="px-5 py-4">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                        ${name.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-900">
+                            ${name}
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            New Customer
+                        </p>
+                    </div>
+
+                </div>
+
+            </td>
+
+            <td class="px-5 py-4">
+
+                <div class="space-y-1">
+                    <div class="text-slate-700">
+                        ${email}
+                    </div>
+
+                    <div class="text-[10px] text-slate-400">
+                        ${phone || "No phone"}
+                    </div>
+                </div>
+
+            </td>
+
+            <td class="px-5 py-4">
+
+                <span class="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-semibold">
+                    🌍 ${country || "Not Set"}
+                </span>
+
+            </td>
+
+            <td class="px-5 py-4">
+
+                <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-bold">
+                    ● ${status}
+                </span>
+
+            </td>
+
+            <td class="px-5 py-4 text-slate-500">
+                Just now
+            </td>
+
+            <td class="px-5 py-4">
+
+                <div class="flex justify-end gap-1">
+
+                    <button
+                        onclick="viewCustomer(this)"
+                        class="w-8 h-8 rounded-lg hover:bg-blue-50">
+                        👁
+                    </button>
+
+                    <button
+                        onclick="editCustomer(this)"
+                        class="w-8 h-8 rounded-lg hover:bg-amber-50">
+                        ✎
+                    </button>
+
+                    <button
+                        onclick="deleteCustomer(this)"
+                        class="w-8 h-8 rounded-lg hover:bg-red-50">
+                        🗑
+                    </button>
+
+                </div>
+
+            </td>
+        `;
+
+        tbody.prepend(row);
+
+        closeAddCustomerModal();
+
+        document.getElementById("customerForm").reset();
+
+        updateStats();
+
+        applyFilters();
+
+        showToast("Customer created successfully");
+
+    });
+
+
+/* ================= CLOSE MODAL ================= */
+
+function closeModal() {
+
+    document.getElementById("customerModal")
+        .classList.add("hidden");
+
+    document.getElementById("customerModal")
+        .classList.remove("flex");
+
+}
+
+
+/* ================= CSV EXPORT ================= */
+
+function exportCustomers() {
+
+    const rows =
+        Array.from(document.querySelectorAll(".customer-row"))
+        .filter(row => row.style.display !== "none");
+
+    if (!rows.length) {
+
+        showToast("No customers available for export");
+
+        return;
+
+    }
+
+    let csv =
+        "Name,Email,Phone,Country,Status\n";
+
+    rows.forEach(row => {
+
+        csv +=
+            `"${row.dataset.name}",` +
+            `"${row.dataset.email}",` +
+            `"${row.dataset.phone}",` +
+            `"${row.dataset.country}",` +
+            `"${row.dataset.status}"\n`;
+
+    });
+
+    const blob =
+        new Blob([csv], {
+            type: "text/csv;charset=utf-8;"
+        });
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "aman-tour-customers.csv";
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    showToast("Customer CSV exported");
+
+}
+
+
+/* ================= TOAST ================= */
+
+function showToast(message) {
+
+    const toast =
+        document.createElement("div");
+
+    toast.className =
+        "fixed bottom-6 right-6 z-[100] bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2";
+
+    toast.innerHTML =
+        `<span class="text-emerald-400">✓</span>${message}`;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px)";
+        toast.style.transition = "all .3s";
+
+        setTimeout(() => toast.remove(), 300);
+
+    }, 2200);
+
+}
+
+
+/* ================= ESC KEY ================= */
+
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "Escape") {
+
+        closeModal();
+        closeAddCustomerModal();
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

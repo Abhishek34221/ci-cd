@@ -1,0 +1,1696 @@
+{% extends "base.html" %}
+{% block title %}Aman Tour & Travels | Enterprise Travel Management{% endblock %}
+
+{% block content %}
+
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+
+    .hero-grid {
+        background-image:
+            linear-gradient(rgba(148,163,184,.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(148,163,184,.08) 1px, transparent 1px);
+        background-size: 38px 38px;
+    }
+
+    .glass {
+        background: rgba(255,255,255,.82);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: all .7s ease;
+    }
+
+    .reveal.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .destination-card {
+        transition: transform .35s ease, box-shadow .35s ease;
+    }
+
+    .destination-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .floating {
+        animation: floating 4s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+        0%,100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    .pulse-dot {
+        box-shadow: 0 0 0 0 rgba(37,99,235,.5);
+        animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+        70% {
+            box-shadow: 0 0 0 8px rgba(37,99,235,0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(37,99,235,0);
+        }
+    }
+
+    .modal-backdrop {
+        background: rgba(15,23,42,.65);
+        backdrop-filter: blur(8px);
+    }
+</style>
+
+<!-- ========================================================= -->
+<!-- HERO -->
+<!-- ========================================================= -->
+
+<section class="relative overflow-hidden bg-slate-950 text-white">
+
+    <div class="absolute inset-0 opacity-20 hero-grid"></div>
+
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-blue-600/30 blur-3xl rounded-full"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-indigo-600/20 blur-3xl rounded-full"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+
+        <div class="grid lg:grid-cols-12 gap-12 items-center">
+
+            <!-- LEFT -->
+
+            <div class="lg:col-span-7 space-y-7 reveal">
+
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-blue-300 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+                    Enterprise Travel Operating System
+                </div>
+
+                <div class="space-y-4">
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[1.05]">
+                        Intelligent Travel.
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+                            Enterprise Scale.
+                        </span>
+                    </h1>
+
+                    <p class="text-slate-300 text-sm lg:text-base max-w-2xl leading-7">
+                        Plan journeys, manage travelers, configure tour packages,
+                        monitor bookings and operate global travel workflows from
+                        one intelligent enterprise platform.
+                    </p>
+
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+
+                    <a href="{{ url_for('tours') }}"
+                       class="px-5 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold transition shadow-lg shadow-blue-900/40">
+                        Explore Tour Packages →
+                    </a>
+
+                    <a href="#booking-engine"
+                       class="px-5 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl text-xs font-bold transition">
+                        Start Planning
+                    </a>
+
+                </div>
+
+                <!-- MINI STATS -->
+
+                <div class="grid grid-cols-3 max-w-xl pt-6 border-t border-white/10">
+
+                    <div>
+                        <div class="text-2xl font-black">
+                            <span class="counter" data-target="10000">0</span>+
+                        </div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wider">
+                            Travelers
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-2xl font-black">
+                            <span class="counter" data-target="50">0</span>+
+                        </div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wider">
+                            Destinations
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-2xl font-black">
+                            <span class="counter" data-target="98">0</span>%
+                        </div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wider">
+                            Satisfaction
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BOOKING ENGINE -->
+
+            <div id="booking-engine" class="lg:col-span-5 reveal">
+
+                <div class="glass text-slate-900 border border-white/20 rounded-3xl p-6 shadow-2xl">
+
+                    <div class="flex items-center justify-between mb-6">
+
+                        <div>
+                            <span class="text-[10px] text-blue-600 font-bold uppercase tracking-widest">
+                                Smart Booking Engine
+                            </span>
+
+                            <h2 class="text-xl font-black mt-1">
+                                Plan Your Journey
+                            </h2>
+                        </div>
+
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                            ✈
+                        </div>
+
+                    </div>
+
+                    <form id="bookingForm" class="space-y-4">
+
+                        <!-- DESTINATION -->
+
+                        <div class="relative">
+
+                            <label class="text-xs font-bold text-slate-700">
+                                Destination
+                            </label>
+
+                            <input
+                                id="destinationInput"
+                                type="text"
+                                autocomplete="off"
+                                placeholder="Search destination..."
+                                class="mt-1 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+
+                            <div id="destinationSuggestions"
+                                 class="hidden absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden">
+
+                                <button type="button" data-destination="Manali"
+                                        class="suggestion w-full text-left px-4 py-3 text-xs hover:bg-blue-50">
+                                    🏔️ Manali
+                                </button>
+
+                                <button type="button" data-destination="Goa"
+                                        class="suggestion w-full text-left px-4 py-3 text-xs hover:bg-blue-50">
+                                    🏖️ Goa
+                                </button>
+
+                                <button type="button" data-destination="Dubai"
+                                        class="suggestion w-full text-left px-4 py-3 text-xs hover:bg-blue-50">
+                                    🌆 Dubai
+                                </button>
+
+                                <button type="button" data-destination="Switzerland"
+                                        class="suggestion w-full text-left px-4 py-3 text-xs hover:bg-blue-50">
+                                    🏔️ Switzerland
+                                </button>
+
+                                <button type="button" data-destination="Japan"
+                                        class="suggestion w-full text-left px-4 py-3 text-xs hover:bg-blue-50">
+                                    🗾 Japan
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- DATE + TRAVELERS -->
+
+                        <div class="grid grid-cols-2 gap-3">
+
+                            <div>
+
+                                <label class="text-xs font-bold text-slate-700">
+                                    Travel Date
+                                </label>
+
+                                <input
+                                    id="travelDate"
+                                    type="date"
+                                    class="mt-1 w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+
+                            </div>
+
+                            <div>
+
+                                <label class="text-xs font-bold text-slate-700">
+                                    Travelers
+                                </label>
+
+                                <select
+                                    id="travelers"
+                                    class="mt-1 w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+
+                                    <option value="1">1 Traveler</option>
+                                    <option value="2">2 Travelers</option>
+                                    <option value="5">Group 5+</option>
+                                    <option value="10">Group 10+</option>
+                                    <option value="20">Corporate 20+</option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <!-- TRIP TYPE -->
+
+                        <div>
+
+                            <label class="text-xs font-bold text-slate-700">
+                                Trip Type
+                            </label>
+
+                            <select
+                                id="tripType"
+                                class="mt-1 w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+
+                                <option>Leisure</option>
+                                <option>Corporate</option>
+                                <option>Executive VIP</option>
+                                <option>Family Vacation</option>
+                                <option>Adventure</option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- BUDGET -->
+
+                        <div>
+
+                            <div class="flex justify-between">
+
+                                <label class="text-xs font-bold text-slate-700">
+                                    Budget
+                                </label>
+
+                                <span id="budgetValue"
+                                      class="text-xs font-bold text-blue-600">
+                                    $1,000
+                                </span>
+
+                            </div>
+
+                            <input
+                                id="budget"
+                                type="range"
+                                min="300"
+                                max="10000"
+                                value="1000"
+                                step="100"
+                                class="w-full mt-3 accent-blue-600">
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-blue-600/20">
+
+                            Find Best Tours →
+                        </button>
+
+                    </form>
+
+                    <div class="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                        Live inventory available
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- QUICK ACTIONS -->
+<!-- ========================================================= -->
+
+<section class="bg-white border-b border-slate-200">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+            <a href="{{ url_for('tours') }}"
+               class="p-4 border border-slate-200 rounded-2xl hover:border-blue-400 hover:shadow-lg transition group">
+
+                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-3">
+                    ✈
+                </div>
+
+                <div class="text-xs font-bold text-slate-900">
+                    Tour Packages
+                </div>
+
+                <div class="text-[10px] text-slate-500 mt-1">
+                    Explore experiences
+                </div>
+
+            </a>
+
+            <a href="{{ url_for('destinations') }}"
+               class="p-4 border border-slate-200 rounded-2xl hover:border-indigo-400 hover:shadow-lg transition">
+
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3">
+                    🌍
+                </div>
+
+                <div class="text-xs font-bold text-slate-900">
+                    Destinations
+                </div>
+
+                <div class="text-[10px] text-slate-500 mt-1">
+                    Global travel hubs
+                </div>
+
+            </a>
+
+            <a href="{{ url_for('customers') }}"
+               class="p-4 border border-slate-200 rounded-2xl hover:border-emerald-400 hover:shadow-lg transition">
+
+                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-3">
+                    👥
+                </div>
+
+                <div class="text-xs font-bold text-slate-900">
+                    Customer CRM
+                </div>
+
+                <div class="text-[10px] text-slate-500 mt-1">
+                    Manage travelers
+                </div>
+
+            </a>
+
+            <button
+                onclick="openSupport()"
+                class="text-left p-4 border border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition">
+
+                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-3">
+                    💬
+                </div>
+
+                <div class="text-xs font-bold text-slate-900">
+                    Travel Support
+                </div>
+
+                <div class="text-[10px] text-slate-500 mt-1">
+                    Get assistance
+                </div>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- KPI -->
+<!-- ========================================================= -->
+
+<section class="bg-slate-50 py-12">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 reveal">
+
+                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                    Active Travelers
+                </span>
+
+                <div class="text-3xl font-black text-slate-900 mt-2">
+                    10,248
+                </div>
+
+                <span class="text-[10px] text-emerald-600 font-semibold">
+                    ↑ 14.8% this month
+                </span>
+
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 reveal">
+
+                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                    Tour Inventory
+                </span>
+
+                <div class="text-3xl font-black text-slate-900 mt-2">
+                    524
+                </div>
+
+                <span class="text-[10px] text-blue-600 font-semibold">
+                    50+ destinations
+                </span>
+
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 reveal">
+
+                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                    Satisfaction
+                </span>
+
+                <div class="text-3xl font-black text-slate-900 mt-2">
+                    98.4%
+                </div>
+
+                <span class="text-[10px] text-amber-600 font-semibold">
+                    ★ 4.9 average
+                </span>
+
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 reveal">
+
+                <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                    Platform Status
+                </span>
+
+                <div class="flex items-center gap-2 mt-2">
+
+                    <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+
+                    <span class="text-2xl font-black text-emerald-600">
+                        Operational
+                    </span>
+
+                </div>
+
+                <span class="text-[10px] text-slate-500">
+                    All systems operational
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- FEATURED DESTINATIONS -->
+<!-- ========================================================= -->
+
+<section class="py-16 bg-white">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 reveal">
+
+            <div>
+
+                <span class="text-[10px] text-blue-600 font-bold uppercase tracking-widest">
+                    Explore
+                </span>
+
+                <h2 class="text-3xl font-black text-slate-900 mt-1">
+                    Featured Destinations
+                </h2>
+
+                <p class="text-xs text-slate-500 mt-2">
+                    Curated destinations selected for enterprise travelers.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('destinations') }}"
+               class="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-blue-600 transition">
+
+                View All Destinations →
+
+            </a>
+
+        </div>
+
+
+        <!-- FILTER -->
+
+        <div class="flex flex-wrap gap-2 mb-6">
+
+            <button class="destination-filter active px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold"
+                    data-filter="all">
+                All
+            </button>
+
+            <button class="destination-filter px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold"
+                    data-filter="mountain">
+                Mountains
+            </button>
+
+            <button class="destination-filter px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold"
+                    data-filter="beach">
+                Beaches
+            </button>
+
+            <button class="destination-filter px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold"
+                    data-filter="city">
+                Cities
+            </button>
+
+        </div>
+
+
+        <div id="destinationGrid"
+             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- MANALI -->
+
+            <div class="destination-card reveal"
+                 data-category="mountain">
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+
+                    <div class="h-56 relative overflow-hidden">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=900"
+                            class="w-full h-full object-cover hover:scale-110 transition duration-700">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent"></div>
+
+                        <span class="absolute top-3 right-3 bg-white/95 px-3 py-1 rounded-full text-xs font-bold">
+                            ★ 4.8
+                        </span>
+
+                        <div class="absolute bottom-4 left-4 text-white">
+
+                            <span class="text-[10px] uppercase tracking-wider font-bold">
+                                India
+                            </span>
+
+                            <h3 class="text-xl font-black">
+                                Manali
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-5">
+
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Snow mountains, adventure activities and premium Himalayan resorts.
+                        </p>
+
+                        <div class="flex justify-between items-center mt-5">
+
+                            <div>
+                                <span class="block text-[10px] text-slate-400">
+                                    FROM
+                                </span>
+
+                                <strong class="text-lg">
+                                    $450
+                                </strong>
+                            </div>
+
+                            <button
+                                onclick="selectDestination('Manali')"
+                                class="px-4 py-2 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white rounded-xl text-xs font-bold transition">
+                                Plan Trip
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- GOA -->
+
+            <div class="destination-card reveal"
+                 data-category="beach">
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+
+                    <div class="h-56 relative overflow-hidden">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=900"
+                            class="w-full h-full object-cover hover:scale-110 transition duration-700">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent"></div>
+
+                        <span class="absolute top-3 right-3 bg-white/95 px-3 py-1 rounded-full text-xs font-bold">
+                            ★ 4.7
+                        </span>
+
+                        <div class="absolute bottom-4 left-4 text-white">
+
+                            <span class="text-[10px] uppercase tracking-wider font-bold">
+                                India
+                            </span>
+
+                            <h3 class="text-xl font-black">
+                                Goa
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-5">
+
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Luxury beaches, coastal resorts, nightlife and Portuguese heritage.
+                        </p>
+
+                        <div class="flex justify-between items-center mt-5">
+
+                            <div>
+                                <span class="block text-[10px] text-slate-400">
+                                    FROM
+                                </span>
+
+                                <strong class="text-lg">
+                                    $380
+                                </strong>
+                            </div>
+
+                            <button
+                                onclick="selectDestination('Goa')"
+                                class="px-4 py-2 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white rounded-xl text-xs font-bold transition">
+                                Plan Trip
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DUBAI -->
+
+            <div class="destination-card reveal"
+                 data-category="city">
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+
+                    <div class="h-56 relative overflow-hidden">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=900"
+                            class="w-full h-full object-cover hover:scale-110 transition duration-700">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent"></div>
+
+                        <span class="absolute top-3 right-3 bg-white/95 px-3 py-1 rounded-full text-xs font-bold">
+                            ★ 4.9
+                        </span>
+
+                        <div class="absolute bottom-4 left-4 text-white">
+
+                            <span class="text-[10px] uppercase tracking-wider font-bold">
+                                UAE
+                            </span>
+
+                            <h3 class="text-xl font-black">
+                                Dubai
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-5">
+
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Premium hotels, futuristic architecture, business and luxury experiences.
+                        </p>
+
+                        <div class="flex justify-between items-center mt-5">
+
+                            <div>
+                                <span class="block text-[10px] text-slate-400">
+                                    FROM
+                                </span>
+
+                                <strong class="text-lg">
+                                    $980
+                                </strong>
+                            </div>
+
+                            <button
+                                onclick="selectDestination('Dubai')"
+                                class="px-4 py-2 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white rounded-xl text-xs font-bold transition">
+                                Plan Trip
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- ENTERPRISE FEATURES -->
+<!-- ========================================================= -->
+
+<section class="py-20 bg-slate-950 text-white">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+
+            <div class="reveal">
+
+                <span class="text-blue-400 text-[10px] uppercase tracking-widest font-bold">
+                    Enterprise Platform
+                </span>
+
+                <h2 class="text-3xl lg:text-5xl font-black mt-3 leading-tight">
+                    One platform.
+                    <span class="text-blue-400">
+                        Complete control.
+                    </span>
+                </h2>
+
+                <p class="text-slate-400 text-sm leading-7 mt-5 max-w-xl">
+                    Manage the complete travel lifecycle from destination discovery
+                    to customer management, package configuration, booking and analytics.
+                </p>
+
+                <div class="mt-8 grid sm:grid-cols-2 gap-4">
+
+                    {% for feature in [
+                        ("Smart Booking", "Automated booking workflows and itinerary management."),
+                        ("Customer CRM", "Centralized traveler profiles and enterprise clients."),
+                        ("Tour Management", "Configure packages, pricing, schedules and capacity."),
+                        ("Travel Analytics", "Monitor bookings, revenue and operational performance.")
+                    ] %}
+
+                    <div class="p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition">
+
+                        <div class="text-blue-400 text-lg mb-3">
+                            ✓
+                        </div>
+
+                        <h3 class="text-sm font-bold">
+                            {{ feature[0] }}
+                        </h3>
+
+                        <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                            {{ feature[1] }}
+                        </p>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <div class="relative reveal">
+
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-5 shadow-2xl">
+
+                    <div class="flex items-center justify-between mb-5">
+
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase">
+                                Live Operations
+                            </span>
+
+                            <h3 class="font-bold mt-1">
+                                Travel Control Center
+                            </h3>
+                        </div>
+
+                        <span class="flex items-center gap-2 text-[10px] text-emerald-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            LIVE
+                        </span>
+
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <div class="bg-white/5 rounded-2xl p-5">
+                            <span class="text-[10px] text-slate-400">
+                                BOOKINGS
+                            </span>
+                            <div class="text-3xl font-black mt-2">
+                                1,284
+                            </div>
+                            <span class="text-[10px] text-emerald-400">
+                                +18.4%
+                            </span>
+                        </div>
+
+                        <div class="bg-white/5 rounded-2xl p-5">
+                            <span class="text-[10px] text-slate-400">
+                                REVENUE
+                            </span>
+                            <div class="text-3xl font-black mt-2">
+                                $84K
+                            </div>
+                            <span class="text-[10px] text-emerald-400">
+                                +12.6%
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-3 bg-white/5 rounded-2xl p-5">
+
+                        <div class="flex justify-between text-xs">
+
+                            <span class="text-slate-400">
+                                Global inventory utilization
+                            </span>
+
+                            <strong>
+                                82%
+                            </strong>
+
+                        </div>
+
+                        <div class="h-2 bg-white/10 rounded-full mt-3 overflow-hidden">
+
+                            <div class="h-full bg-blue-500 rounded-full"
+                                 style="width:82%">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-3 grid grid-cols-3 gap-3">
+
+                        <div class="bg-white/5 rounded-xl p-4 text-center">
+                            <div class="text-lg font-black">52</div>
+                            <div class="text-[9px] text-slate-500">DESTINATIONS</div>
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-4 text-center">
+                            <div class="text-lg font-black">524</div>
+                            <div class="text-[9px] text-slate-500">PACKAGES</div>
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-4 text-center">
+                            <div class="text-lg font-black">99.9%</div>
+                            <div class="text-[9px] text-slate-500">UPTIME</div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- FAQ -->
+<!-- ========================================================= -->
+
+<section class="py-20 bg-slate-50">
+
+    <div class="max-w-4xl mx-auto px-4">
+
+        <div class="text-center mb-10 reveal">
+
+            <span class="text-[10px] text-blue-600 uppercase tracking-widest font-bold">
+                Support
+            </span>
+
+            <h2 class="text-3xl font-black text-slate-900 mt-2">
+                Frequently Asked Questions
+            </h2>
+
+        </div>
+
+        <div class="space-y-3">
+
+            {% for faq in [
+                ("Can I manage corporate travelers?", "Yes. The platform supports enterprise customers, traveler profiles, group bookings and corporate travel workflows."),
+                ("Can I configure tour packages?", "Yes. Packages can include destinations, duration, pricing, capacity, ratings and operational status."),
+                ("Does the system support customer management?", "Yes. The CRM section allows administrators to monitor registered customers and traveler information."),
+                ("Can I manage multiple destinations?", "Yes. Destinations can be organized by country, region, rating and other operational attributes.")
+            ] %}
+
+            <div class="faq-item bg-white border border-slate-200 rounded-2xl overflow-hidden">
+
+                <button
+                    class="faq-button w-full flex items-center justify-between p-5 text-left">
+
+                    <span class="text-xs font-bold text-slate-900">
+                        {{ faq[0] }}
+                    </span>
+
+                    <span class="faq-icon text-blue-600 text-lg">
+                        +
+                    </span>
+
+                </button>
+
+                <div class="faq-answer hidden px-5 pb-5">
+
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        {{ faq[1] }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- CTA -->
+<!-- ========================================================= -->
+
+<section class="relative overflow-hidden bg-blue-600 text-white">
+
+    <div class="absolute inset-0 opacity-10 hero-grid"></div>
+
+    <div class="relative max-w-4xl mx-auto px-4 py-20 text-center">
+
+        <div class="floating">
+
+            <div class="text-blue-100 text-[10px] uppercase tracking-widest font-bold">
+                Start Your Journey
+            </div>
+
+            <h2 class="text-4xl lg:text-5xl font-black mt-3">
+                Ready to travel smarter?
+            </h2>
+
+            <p class="text-blue-100 text-sm mt-4 max-w-xl mx-auto leading-6">
+                Explore premium destinations and enterprise-grade travel management
+                with Aman Tour & Travels.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-3 mt-8">
+
+                <a href="{{ url_for('tours') }}"
+                   class="px-6 py-3 bg-white text-blue-700 rounded-xl text-xs font-bold hover:bg-slate-100 transition">
+                    Explore Tours
+                </a>
+
+                <a href="{{ url_for('destinations') }}"
+                   class="px-6 py-3 bg-blue-700 border border-blue-400 text-white rounded-xl text-xs font-bold hover:bg-blue-800 transition">
+                    View Destinations
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- BOOKING RESULT MODAL -->
+<!-- ========================================================= -->
+
+<div id="bookingModal"
+     class="hidden fixed inset-0 z-[100] modal-backdrop items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden">
+
+        <div class="bg-slate-950 text-white p-6">
+
+            <div class="flex justify-between items-center">
+
+                <div>
+
+                    <span class="text-[10px] text-blue-400 uppercase tracking-widest">
+                        Smart Recommendation
+                    </span>
+
+                    <h3 class="text-xl font-black mt-1">
+                        Travel Plan Ready
+                    </h3>
+
+                </div>
+
+                <button
+                    onclick="closeBookingModal()"
+                    class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20">
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="p-6 space-y-5">
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <span class="text-[10px] text-slate-400">
+                        DESTINATION
+                    </span>
+                    <div id="resultDestination"
+                         class="font-black text-slate-900 mt-1">
+                        —
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <span class="text-[10px] text-slate-400">
+                        TRAVELERS
+                    </span>
+                    <div id="resultTravelers"
+                         class="font-black text-slate-900 mt-1">
+                        —
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <span class="text-[10px] text-slate-400">
+                        TRIP TYPE
+                    </span>
+                    <div id="resultTrip"
+                         class="font-black text-slate-900 mt-1">
+                        —
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4">
+                    <span class="text-[10px] text-slate-400">
+                        BUDGET
+                    </span>
+                    <div id="resultBudget"
+                         class="font-black text-blue-600 mt-1">
+                        —
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
+
+                <div class="text-xs font-bold text-blue-800">
+                    Recommended next step
+                </div>
+
+                <p class="text-[11px] text-blue-700 mt-1">
+                    Browse matching tour packages and compare available itineraries.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('tours') }}"
+               class="block text-center w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">
+                Browse Matching Tours →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- SUPPORT MODAL -->
+<!-- ========================================================= -->
+
+<div id="supportModal"
+     class="hidden fixed inset-0 z-[100] modal-backdrop items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6">
+
+        <div class="flex justify-between">
+
+            <div>
+
+                <span class="text-[10px] text-blue-600 uppercase tracking-widest font-bold">
+                    Support Center
+                </span>
+
+                <h3 class="text-xl font-black text-slate-900 mt-1">
+                    How can we help?
+                </h3>
+
+            </div>
+
+            <button onclick="closeSupport()"
+                    class="w-9 h-9 bg-slate-100 rounded-xl">
+                ×
+            </button>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-6">
+
+            <button onclick="supportMessage('Booking Assistance')"
+                    class="p-4 bg-slate-50 hover:bg-blue-50 rounded-xl text-left">
+                <div class="text-lg">✈️</div>
+                <div class="text-xs font-bold mt-2">
+                    Booking Help
+                </div>
+            </button>
+
+            <button onclick="supportMessage('Package Information')"
+                    class="p-4 bg-slate-50 hover:bg-blue-50 rounded-xl text-left">
+                <div class="text-lg">🗺️</div>
+                <div class="text-xs font-bold mt-2">
+                    Package Info
+                </div>
+            </button>
+
+            <button onclick="supportMessage('Customer Support')"
+                    class="p-4 bg-slate-50 hover:bg-blue-50 rounded-xl text-left">
+                <div class="text-lg">👥</div>
+                <div class="text-xs font-bold mt-2">
+                    Customer Support
+                </div>
+            </button>
+
+            <button onclick="supportMessage('Corporate Travel')"
+                    class="p-4 bg-slate-50 hover:bg-blue-50 rounded-xl text-left">
+                <div class="text-lg">🏢</div>
+                <div class="text-xs font-bold mt-2">
+                    Corporate Travel
+                </div>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       DATE VALIDATION
+    ===================================================== */
+
+    const dateInput = document.getElementById("travelDate");
+
+    if (dateInput) {
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const dd = String(today.getDate()).padStart(2, "0");
+
+        dateInput.min = `${yyyy}-${mm}-${dd}`;
+
+    }
+
+
+    /* =====================================================
+       DESTINATION AUTOCOMPLETE
+    ===================================================== */
+
+    const destinationInput =
+        document.getElementById("destinationInput");
+
+    const suggestions =
+        document.getElementById("destinationSuggestions");
+
+    if (destinationInput) {
+
+        destinationInput.addEventListener("focus", function () {
+            suggestions.classList.remove("hidden");
+        });
+
+        destinationInput.addEventListener("input", function () {
+
+            const value = this.value.toLowerCase();
+
+            document.querySelectorAll(".suggestion").forEach(btn => {
+
+                const text =
+                    btn.dataset.destination.toLowerCase();
+
+                btn.style.display =
+                    text.includes(value) ? "block" : "none";
+
+            });
+
+            suggestions.classList.remove("hidden");
+
+        });
+
+    }
+
+
+    document.querySelectorAll(".suggestion").forEach(btn => {
+
+        btn.addEventListener("click", function () {
+
+            destinationInput.value =
+                this.dataset.destination;
+
+            suggestions.classList.add("hidden");
+
+        });
+
+    });
+
+
+    document.addEventListener("click", function (event) {
+
+        if (
+            destinationInput &&
+            suggestions &&
+            !destinationInput.contains(event.target) &&
+            !suggestions.contains(event.target)
+        ) {
+            suggestions.classList.add("hidden");
+        }
+
+    });
+
+
+    /* =====================================================
+       BUDGET SLIDER
+    ===================================================== */
+
+    const budget =
+        document.getElementById("budget");
+
+    const budgetValue =
+        document.getElementById("budgetValue");
+
+    if (budget) {
+
+        budget.addEventListener("input", function () {
+
+            budgetValue.innerText =
+                "$" + Number(this.value).toLocaleString();
+
+        });
+
+    }
+
+
+    /* =====================================================
+       BOOKING FORM
+    ===================================================== */
+
+    const bookingForm =
+        document.getElementById("bookingForm");
+
+    bookingForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        const destination =
+            destinationInput.value.trim();
+
+        const date =
+            dateInput.value;
+
+        const travelers =
+            document.getElementById("travelers").value;
+
+        const trip =
+            document.getElementById("tripType").value;
+
+        const budgetAmount =
+            document.getElementById("budget").value;
+
+        if (!destination) {
+
+            showToast("Please select a destination.");
+
+            destinationInput.focus();
+
+            return;
+
+        }
+
+        if (!date) {
+
+            showToast("Please select your travel date.");
+
+            dateInput.focus();
+
+            return;
+
+        }
+
+        document.getElementById("resultDestination").innerText =
+            destination;
+
+        document.getElementById("resultTravelers").innerText =
+            travelers + " Traveler(s)";
+
+        document.getElementById("resultTrip").innerText =
+            trip;
+
+        document.getElementById("resultBudget").innerText =
+            "$" + Number(budgetAmount).toLocaleString();
+
+        document.getElementById("bookingModal")
+            .classList.remove("hidden");
+
+        document.getElementById("bookingModal")
+            .classList.add("flex");
+
+    });
+
+
+    /* =====================================================
+       DESTINATION FILTER
+    ===================================================== */
+
+    document.querySelectorAll(".destination-filter")
+        .forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            document.querySelectorAll(".destination-filter")
+                .forEach(btn => {
+
+                    btn.classList.remove(
+                        "bg-blue-600",
+                        "text-white"
+                    );
+
+                    btn.classList.add(
+                        "bg-slate-100",
+                        "text-slate-600"
+                    );
+
+                });
+
+            this.classList.remove(
+                "bg-slate-100",
+                "text-slate-600"
+            );
+
+            this.classList.add(
+                "bg-blue-600",
+                "text-white"
+            );
+
+            const filter =
+                this.dataset.filter;
+
+            document.querySelectorAll(".destination-card")
+                .forEach(card => {
+
+                    if (
+                        filter === "all" ||
+                        card.dataset.category === filter
+                    ) {
+
+                        card.style.display = "block";
+
+                    } else {
+
+                        card.style.display = "none";
+
+                    }
+
+                });
+
+        });
+
+    });
+
+
+    /* =====================================================
+       FAQ
+    ===================================================== */
+
+    document.querySelectorAll(".faq-button")
+        .forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            const answer =
+                this.parentElement.querySelector(".faq-answer");
+
+            const icon =
+                this.querySelector(".faq-icon");
+
+            const isHidden =
+                answer.classList.contains("hidden");
+
+            document.querySelectorAll(".faq-answer")
+                .forEach(item => item.classList.add("hidden"));
+
+            document.querySelectorAll(".faq-icon")
+                .forEach(item => item.innerText = "+");
+
+            if (isHidden) {
+
+                answer.classList.remove("hidden");
+
+                icon.innerText = "−";
+
+            }
+
+        });
+
+    });
+
+
+    /* =====================================================
+       SCROLL REVEAL
+    ===================================================== */
+
+    const observer =
+        new IntersectionObserver((entries) => {
+
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.classList.add("show");
+
+                    observer.unobserve(entry.target);
+
+                }
+
+            });
+
+        }, {
+            threshold: .12
+        });
+
+
+    document.querySelectorAll(".reveal")
+        .forEach(el => observer.observe(el));
+
+
+    /* =====================================================
+       COUNTER ANIMATION
+    ===================================================== */
+
+    document.querySelectorAll(".counter")
+        .forEach(counter => {
+
+        const target =
+            Number(counter.dataset.target);
+
+        let current = 0;
+
+        const increment =
+            Math.max(1, Math.ceil(target / 80));
+
+        const timer =
+            setInterval(() => {
+
+                current += increment;
+
+                if (current >= target) {
+
+                    current = target;
+
+                    clearInterval(timer);
+
+                }
+
+                counter.innerText =
+                    current.toLocaleString();
+
+            }, 20);
+
+    });
+
+});
+
+
+/* =========================================================
+   DESTINATION QUICK SELECT
+========================================================= */
+
+function selectDestination(destination) {
+
+    const input =
+        document.getElementById("destinationInput");
+
+    input.value = destination;
+
+    document
+        .getElementById("booking-engine")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    showToast(destination + " selected.");
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function closeBookingModal() {
+
+    const modal =
+        document.getElementById("bookingModal");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+}
+
+
+/* =========================================================
+   SUPPORT
+========================================================= */
+
+function openSupport() {
+
+    const modal =
+        document.getElementById("supportModal");
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+
+}
+
+function closeSupport() {
+
+    const modal =
+        document.getElementById("supportModal");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+}
+
+function supportMessage(type) {
+
+    closeSupport();
+
+    showToast(type + " selected. Our support team is ready.");
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(message) {
+
+    const existing =
+        document.getElementById("appToast");
+
+    if (existing) {
+        existing.remove();
+    }
+
+    const toast =
+        document.createElement("div");
+
+    toast.id = "appToast";
+
+    toast.className =
+        "fixed bottom-6 right-6 z-[200] bg-slate-950 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-3";
+
+    toast.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        ${message}
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px)";
+        toast.style.transition = ".3s";
+
+        setTimeout(() => toast.remove(), 300);
+
+    }, 2800);
+
+}
+
+</script>
+
+{% endblock %}

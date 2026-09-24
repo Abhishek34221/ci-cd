@@ -1,0 +1,9 @@
+/* Custom enterprise styling enhancements */
+body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Subtle transitions & focus states */
+input, select, button {
+    transition: all 0.15s ease-in-out;
+}

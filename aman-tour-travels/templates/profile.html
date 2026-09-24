@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}User Profile | Aman Tour & Travels{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 lg:px-8 py-12">
+    <div class="bg-white border border-slate-200/90 rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white flex items-center gap-6">
+            <div class="w-20 h-20 bg-white text-blue-700 font-extrabold rounded-2xl flex items-center justify-center text-2xl shadow-lg">AD</div>
+            <div>
+                <h2 class="text-2xl font-bold">Aman Enterprise Director</h2>
+                <p class="text-xs text-blue-100 mt-1">{{ user.email }}</p>
+                <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/40 border border-blue-400">Active JWT Session</span>
+            </div>
+        </div>
+
+        <div class="p-8 space-y-6">
+            <h3 class="font-bold text-sm text-slate-900 uppercase tracking-wider">Account Credentials & Telemetry</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <span class="text-slate-400 block">Registered Email</span>
+                    <span class="font-semibold text-slate-800">{{ user.email }}</span>
+                </div>
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <span class="text-slate-400 block">Security Tier</span>
+                    <span class="font-semibold text-slate-800">Enterprise Standard (JWT)</span>
+                </div>
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <span class="text-slate-400 block">Active Organization</span>
+                    <span class="font-semibold text-slate-800">Aman Tour & Travels Inc.</span>
+                </div>
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <span class="text-slate-400 block">API Status</span>
+                    <span class="font-semibold text-emerald-600">Connected to FastAPI Backend</span>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+                <a href="{{ url_for('dashboard') }}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition">Return to Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl shadow-sm transition">Sign Out</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

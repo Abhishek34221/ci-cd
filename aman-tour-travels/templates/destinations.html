@@ -1,0 +1,4375 @@
+{% extends "base.html" %}
+
+{% block title %}
+Destinations Management Hub | Aman Tour & Travels
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6">
+
+    <!-- ========================================================= -->
+    <!-- HEADER -->
+    <!-- ========================================================= -->
+
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+
+        <div class="flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-5">
+
+            <div>
+
+                <div class="flex items-center gap-2 mb-2">
+
+                    <span
+                        class="px-2.5 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                        Enterprise Admin
+                    </span>
+
+                    <span class="text-slate-300">•</span>
+
+                    <span class="flex items-center gap-1.5 text-[11px] text-emerald-600 font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        MongoDB Catalog
+                    </span>
+
+                </div>
+
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">
+                    Destinations Management Hub
+                </h1>
+
+                <p class="text-xs text-slate-500 mt-1">
+                    Manage destinations, countries, pricing, ratings, availability and travel inventory.
+                </p>
+
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+
+                <button
+                    onclick="refreshCatalog()"
+                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold flex items-center gap-2">
+
+                    <span id="refreshIcon">↻</span>
+                    Refresh
+
+                </button>
+
+                <button
+                    onclick="exportCSV()"
+                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold">
+                    ↓ Export CSV
+                </button>
+
+                <button
+                    onclick="exportJSON()"
+                    class="px-4 py-2.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold">
+                    {} JSON
+                </button>
+
+                <button
+                    onclick="openAddModal()"
+                    class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-lg shadow-blue-200">
+                    + Add Destination
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- API STATUS -->
+    <!-- ========================================================= -->
+
+    <div
+        id="apiStatus"
+        class="hidden rounded-xl border px-4 py-3 text-xs font-semibold">
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- KPI -->
+    <!-- ========================================================= -->
+
+    <div class="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-4">
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <p class="text-[10px] uppercase font-bold text-slate-400">
+                Destinations
+            </p>
+
+            <h3 id="kpiTotal"
+                class="text-3xl font-black text-slate-900 mt-2">
+                0
+            </h3>
+
+            <p class="text-[10px] text-blue-600 mt-1">
+                Total hubs
+            </p>
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+
+            <p class="text-[10px] uppercase font-bold text-slate-400">
+                Countries
+            </p>
+
+            <h3 id="kpiCountries"
+                class="text-3xl font-black text-slate-900 mt-2">
+                0
+            </h3>
+
+            <p class="text-[10px] text-indigo-600 mt-1">
+                Global coverage
+            </p>
+
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+
+            <p class="text-[10px] uppercase font-bold text-slate-400">
+                Average Rating
+            </p>
+
+            <h3 id="kpiRating"
+                class="text-3xl font-black text-slate-900 mt-2">
+                0
+            </h3>
+
+            <p class="text-[10px] text-amber-600 mt-1">
+                Traveler rating
+            </p>
+
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+
+            <p class="text-[10px] uppercase font-bold text-slate-400">
+                Active
+            </p>
+
+            <h3 id="kpiActive"
+                class="text-3xl font-black text-emerald-600 mt-2">
+                0
+            </h3>
+
+            <p class="text-[10px] text-emerald-600 mt-1">
+                Available hubs
+            </p>
+
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+
+            <p class="text-[10px] uppercase font-bold text-slate-400">
+                Favorites
+            </p>
+
+            <h3 id="kpiFavorites"
+                class="text-3xl font-black text-rose-500 mt-2">
+                0
+            </h3>
+
+            <p class="text-[10px] text-rose-500 mt-1">
+                Bookmarked
+            </p>
+
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+
+            <p class="text-[10px] uppercase font-bold text-slate-400">
+                Visible
+            </p>
+
+            <h3 id="kpiVisible"
+                class="text-3xl font-black text-blue-600 mt-2">
+                0
+            </h3>
+
+            <p class="text-[10px] text-slate-400 mt-1">
+                Filtered results
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- FILTER PANEL -->
+    <!-- ========================================================= -->
+
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm">
+
+        <div class="p-4 border-b border-slate-100 flex flex-col lg:flex-row gap-3">
+
+            <div class="relative flex-1">
+
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    🔎
+                </span>
+
+                <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Search destination, country, code, description..."
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-blue-100">
+
+                <button
+                    onclick="clearSearch()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="relative">
+
+                <select
+                    id="countryFilter"
+                    class="appearance-none min-w-[190px] bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-10 py-3 text-xs font-semibold focus:outline-none focus:border-blue-500">
+
+                    <option value="">
+                        🌍 All Countries
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <select
+                    id="statusFilter"
+                    class="min-w-[160px] bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="active">
+                        🟢 Active
+                    </option>
+
+                    <option value="inactive">
+                        ⚪ Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <select
+                id="ratingFilter"
+                class="min-w-[150px] bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold">
+
+                <option value="">
+                    ⭐ All Ratings
+                </option>
+
+                <option value="5">
+                    ⭐ 5.0
+                </option>
+
+                <option value="4">
+                    ⭐ 4.0+
+                </option>
+
+                <option value="3">
+                    ⭐ 3.0+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="p-4 flex flex-col lg:flex-row gap-3">
+
+            <select
+                id="sortFilter"
+                class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold">
+
+                <option value="default">
+                    ↕ Default Sorting
+                </option>
+
+                <option value="nameAsc">
+                    A → Z
+                </option>
+
+                <option value="nameDesc">
+                    Z → A
+                </option>
+
+                <option value="ratingHigh">
+                    ⭐ Highest Rating
+                </option>
+
+                <option value="ratingLow">
+                    ⭐ Lowest Rating
+                </option>
+
+                <option value="priceHigh">
+                    ₹ Highest Price
+                </option>
+
+                <option value="priceLow">
+                    ₹ Lowest Price
+                </option>
+
+                <option value="newest">
+                    Newest First
+                </option>
+
+            </select>
+
+
+            <div class="flex items-center gap-2">
+
+                <input
+                    id="minPrice"
+                    type="number"
+                    placeholder="Min Price"
+                    class="w-32 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs">
+
+                <span class="text-slate-300">
+                    —
+                </span>
+
+                <input
+                    id="maxPrice"
+                    type="number"
+                    placeholder="Max Price"
+                    class="w-32 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-xs">
+
+            </div>
+
+
+            <button
+                onclick="showFavoritesOnly()"
+                id="favoriteFilterBtn"
+                class="px-4 py-3 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl text-xs font-semibold">
+
+                ♥ Favorites
+
+            </button>
+
+
+            <button
+                onclick="resetFilters()"
+                class="px-4 py-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold">
+
+                Reset Filters
+
+            </button>
+
+
+            <div class="lg:ml-auto flex items-center gap-2">
+
+                <button
+                    id="gridBtn"
+                    onclick="setView('grid')"
+                    class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl">
+                    ▦
+                </button>
+
+                <button
+                    id="listBtn"
+                    onclick="setView('list')"
+                    class="w-10 h-10 bg-slate-50 text-slate-500 rounded-xl">
+                    ☷
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="px-4 pb-4 flex items-center justify-between">
+
+            <span
+                id="resultCount"
+                class="text-[11px] font-semibold text-slate-500">
+                0 results
+            </span>
+
+            <span class="text-[10px] text-slate-400">
+                Live MongoDB catalog
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- BULK BAR -->
+    <!-- ========================================================= -->
+
+    <div
+        id="bulkBar"
+        class="hidden bg-slate-900 text-white rounded-2xl p-3 items-center justify-between">
+
+        <div class="flex items-center gap-3">
+
+            <span
+                id="selectedCount"
+                class="text-xs font-bold">
+                0 selected
+            </span>
+
+            <button
+                onclick="selectAllVisible()"
+                class="text-[11px] text-slate-300 hover:text-white">
+                Select All
+            </button>
+
+            <button
+                onclick="clearSelection()"
+                class="text-[11px] text-slate-300 hover:text-white">
+                Clear
+            </button>
+
+        </div>
+
+
+        <div class="flex gap-2">
+
+            <button
+                onclick="bulkActivate()"
+                class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-[11px] font-semibold">
+                Activate
+            </button>
+
+            <button
+                onclick="bulkDeactivate()"
+                class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-[11px] font-semibold">
+                Deactivate
+            </button>
+
+            <button
+                onclick="bulkDelete()"
+                class="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-[11px] font-semibold">
+                Delete
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- DESTINATION GRID -->
+    <!-- ========================================================= -->
+
+    <div
+        id="destinationGrid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+
+        {% for dest in destinations %}
+
+        <div
+            class="destination-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+
+            data-id="{{ dest.id|default(loop.index) }}"
+
+            data-name="{{ dest.name|default('')|lower }}"
+
+            data-country="{{ dest.country|default('')|lower }}"
+
+            data-description="{{ dest.desc|default(dest.description|default(''))|lower }}"
+
+            data-code="{{ dest.code|default('')|lower }}"
+
+            data-rating="{{ dest.rating|default(0) }}"
+
+            data-price="{{ dest.price|default(0)|replace(',', '')|replace('₹','')|replace('$','') }}"
+
+            data-status="{{ dest.status|default('active')|lower }}"
+
+            data-favorite="false"
+
+            data-created="{{ loop.index }}">
+
+            <div class="h-52 relative overflow-hidden">
+
+                <img
+                    src="{{ dest.image|default('') }}"
+                    class="destination-image w-full h-full object-cover hover:scale-105 transition duration-500"
+                    loading="lazy"
+                    onerror="this.src='https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80'">
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent"></div>
+
+
+                <label class="absolute top-3 left-3">
+
+                    <input
+                        type="checkbox"
+                        class="destination-checkbox w-4 h-4 rounded accent-blue-600"
+                        onchange="updateSelection()">
+
+                </label>
+
+
+                <button
+                    onclick="toggleFavorite(this)"
+                    class="favorite-btn absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur rounded-xl shadow-sm text-slate-400 hover:text-rose-500 transition">
+
+                    ♡
+
+                </button>
+
+
+                <div
+                    class="absolute bottom-3 right-3 px-2.5 py-1 bg-white/95 rounded-lg text-xs font-bold">
+
+                    ⭐ {{ dest.rating|default(0) }}
+
+                </div>
+
+
+                <div
+                    class="absolute bottom-3 left-3 bg-slate-950/75 backdrop-blur text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase">
+
+                    🌍 {{ dest.country|default('Unknown') }}
+
+                </div>
+
+
+                <div class="absolute top-14 left-3">
+
+                    {% if dest.status|default('active') == 'active' %}
+
+                    <span
+                        class="status-badge px-2 py-1 bg-emerald-500/90 text-white rounded-lg text-[9px] font-bold">
+
+                        ● ACTIVE
+
+                    </span>
+
+                    {% else %}
+
+                    <span
+                        class="status-badge px-2 py-1 bg-slate-700/90 text-white rounded-lg text-[9px] font-bold">
+
+                        INACTIVE
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="p-5">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div>
+
+                        <h3
+                            class="destination-name font-bold text-base text-slate-900">
+
+                            {{ dest.name|default('Unnamed Destination') }}
+
+                        </h3>
+
+                        <p
+                            class="destination-code text-[10px] text-slate-400 mt-1">
+
+                            {{ dest.code|default('HUB-' ~ "%04d"|format(loop.index)) }}
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="relative">
+
+                        <button
+                            onclick="toggleMenu(this)"
+                            class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500">
+
+                            ⋮
+
+                        </button>
+
+
+                        <div
+                            class="action-menu hidden absolute right-0 top-9 z-20 w-36 bg-white border border-slate-200 rounded-xl shadow-xl p-1">
+
+                            <button
+                                onclick="viewDestination(this)"
+                                class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                                👁 View
+
+                            </button>
+
+                            <button
+                                onclick="editDestination(this)"
+                                class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                                ✎ Edit
+
+                            </button>
+
+                            <button
+                                onclick="duplicateDestination(this)"
+                                class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                                ⧉ Duplicate
+
+                            </button>
+
+                            <button
+                                onclick="toggleStatus(this)"
+                                class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                                ◉ Toggle Status
+
+                            </button>
+
+                            <button
+                                onclick="deleteDestination(this)"
+                                class="w-full text-left px-3 py-2 hover:bg-red-50 text-red-600 rounded-lg text-[11px]">
+
+                                🗑 Delete
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="destination-description text-xs text-slate-500 leading-relaxed mt-3 line-clamp-2">
+
+                    {{ dest.desc|default(dest.description|default('No description available.')) }}
+
+                </p>
+
+
+                <div
+                    class="flex items-end justify-between mt-5 pt-4 border-t border-slate-100">
+
+                    <div>
+
+                        <span
+                            class="text-[9px] uppercase font-bold text-slate-400">
+
+                            Starting From
+
+                        </span>
+
+                        <div
+                            class="destination-price text-lg font-black text-slate-900">
+
+                            {{ dest.price|default('₹0') }}
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        onclick="viewDestination(this)"
+                        class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-semibold">
+
+                        View →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- NO RESULTS -->
+    <!-- ========================================================= -->
+
+    <div
+        id="noResults"
+        class="hidden bg-white border border-slate-200 rounded-2xl p-20 text-center">
+
+        <div class="text-5xl mb-4">
+            🔎
+        </div>
+
+        <h3 class="text-lg font-bold text-slate-900">
+            No destinations found
+        </h3>
+
+        <p class="text-xs text-slate-500 mt-2">
+            Try changing your filters or search keyword.
+        </p>
+
+        <button
+            onclick="resetFilters()"
+            class="mt-5 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold">
+
+            Reset Filters
+
+        </button>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- ADD / EDIT MODAL -->
+    <!-- ========================================================= -->
+
+    <div
+        id="destinationModal"
+        class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm items-center justify-center p-4">
+
+        <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+            <div
+                class="sticky top-0 bg-white border-b border-slate-100 p-5 flex justify-between z-10">
+
+                <div>
+
+                    <h3
+                        id="modalTitle"
+                        class="font-black text-lg">
+
+                        Add Destination
+
+                    </h3>
+
+                    <p
+                        class="text-[10px] text-slate-400 mt-1">
+
+                        Destination configuration
+
+                    </p>
+
+                </div>
+
+
+                <button
+                    onclick="closeModal()"
+                    class="w-9 h-9 hover:bg-slate-100 rounded-xl">
+
+                    ×
+
+                </button>
+
+            </div>
+
+
+            <form
+                id="destinationForm"
+                class="p-6 space-y-4">
+
+                <input
+                    type="hidden"
+                    id="editCardId">
+
+
+                <div class="grid md:grid-cols-2 gap-4">
+
+                    <div>
+
+                        <label class="label">
+                            Destination Name
+                        </label>
+
+                        <input
+                            id="destName"
+                            required
+                            class="input"
+                            placeholder="Dubai">
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="label">
+                            Country
+                        </label>
+
+                        <input
+                            id="destCountry"
+                            required
+                            class="input"
+                            placeholder="UAE">
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="label">
+                            Rating
+                        </label>
+
+                        <input
+                            id="destRating"
+                            type="number"
+                            min="0"
+                            max="5"
+                            step="0.1"
+                            required
+                            class="input"
+                            placeholder="4.8">
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="label">
+                            Price
+                        </label>
+
+                        <input
+                            id="destPrice"
+                            required
+                            class="input"
+                            placeholder="₹45,000">
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="label">
+                            Status
+                        </label>
+
+                        <select
+                            id="destStatus"
+                            class="input">
+
+                            <option value="active">
+                                Active
+                            </option>
+
+                            <option value="inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="label">
+                            Destination Code
+                        </label>
+
+                        <input
+                            id="destCode"
+                            class="input"
+                            placeholder="DXB-001">
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <label class="label">
+                        Image URL
+                    </label>
+
+                    <input
+                        id="destImage"
+                        required
+                        class="input"
+                        placeholder="https://...">
+
+                </div>
+
+
+                <div>
+
+                    <label class="label">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="destDescription"
+                        rows="4"
+                        required
+                        class="input"
+                        placeholder="Destination description..."></textarea>
+
+                </div>
+
+
+                <div
+                    id="previewBox"
+                    class="hidden">
+
+                    <img
+                        id="imagePreview"
+                        class="w-full h-44 object-cover rounded-xl">
+
+                </div>
+
+
+                <div
+                    class="flex justify-end gap-3 pt-4 border-t">
+
+                    <button
+                        type="button"
+                        onclick="closeModal()"
+                        class="px-5 py-2.5 bg-slate-100 rounded-xl text-xs font-semibold">
+
+                        Cancel
+
+                    </button>
+
+
+                    <button
+                        id="saveDestinationBtn"
+                        type="submit"
+                        class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold">
+
+                        Save Destination
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- VIEW MODAL -->
+    <!-- ========================================================= -->
+
+    <div
+        id="viewModal"
+        class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm items-center justify-center p-4">
+
+        <div
+            class="bg-white rounded-2xl overflow-hidden shadow-2xl max-w-lg w-full">
+
+            <img
+                id="viewImage"
+                class="w-full h-60 object-cover">
+
+            <div class="p-6">
+
+                <div class="flex justify-between">
+
+                    <div>
+
+                        <h3
+                            id="viewName"
+                            class="text-xl font-black">
+                        </h3>
+
+                        <p
+                            id="viewCountry"
+                            class="text-xs text-blue-600 mt-1">
+                        </p>
+
+                    </div>
+
+
+                    <span
+                        id="viewRating"
+                        class="h-fit px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold">
+                    </span>
+
+                </div>
+
+
+                <p
+                    id="viewDescription"
+                    class="text-sm text-slate-500 leading-relaxed mt-5">
+                </p>
+
+
+                <div
+                    class="bg-slate-50 rounded-xl p-4 mt-5">
+
+                    <span
+                        class="text-[9px] uppercase font-bold text-slate-400">
+
+                        Starting Price
+
+                    </span>
+
+                    <div
+                        id="viewPrice"
+                        class="text-2xl font-black mt-1">
+                    </div>
+
+                </div>
+
+
+                <button
+                    onclick="closeViewModal()"
+                    class="w-full mt-5 py-3 bg-slate-900 text-white rounded-xl text-xs font-semibold">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- TOAST -->
+    <!-- ========================================================= -->
+
+    <div
+        id="toast"
+        class="fixed right-5 bottom-5 z-[100] translate-y-20 opacity-0 transition-all duration-300">
+
+        <div
+            class="bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl">
+
+            <span
+                id="toastMessage"
+                class="text-xs font-semibold">
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- STYLES -->
+<!-- ========================================================= -->
+
+<style>
+
+.label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 7px;
+}
+
+.input {
+    width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 12px;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+}
+
+.list-mode {
+    grid-template-columns: 1fr !important;
+}
+
+.list-mode .destination-card {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+}
+
+.list-mode .destination-card > div:first-child {
+    height: 100%;
+    min-height: 180px;
+}
+
+</style>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+"use strict";
+
+
+/*
+=============================================================
+FASTAPI CONFIGURATION
+=============================================================
+*/
+
+const API_BASE_URL = "http://127.0.0.1:8000";
+
+const DESTINATION_API =
+    `${API_BASE_URL}/destinations/`;
+
+
+let favoritesOnly = false;
+
+
+/*
+=============================================================
+PAGE INIT
+=============================================================
+*/
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    populateCountryFilter();
+
+    updateKPIs();
+
+    applyFilters();
+
+    setupEventListeners();
+
+    await loadDestinationsFromMongoDB();
+
+});
+
+
+/*
+=============================================================
+EVENT LISTENERS
+=============================================================
+*/
+
+function setupEventListeners() {
+
+    const filterElements = [
+
+        "searchInput",
+        "countryFilter",
+        "statusFilter",
+        "ratingFilter",
+        "sortFilter",
+        "minPrice",
+        "maxPrice"
+
+    ];
+
+
+    filterElements.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element)
+            return;
+
+        element.addEventListener(
+            "input",
+            applyFilters
+        );
+
+        element.addEventListener(
+            "change",
+            applyFilters
+        );
+
+    });
+
+
+    const imageInput =
+        document.getElementById("destImage");
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
+            "input",
+            previewImage
+        );
+
+    }
+
+}
+
+
+/*
+=============================================================
+LOAD DESTINATIONS FROM MONGODB
+=============================================================
+*/
+
+async function loadDestinationsFromMongoDB() {
+
+    try {
+
+        setAPIStatus(
+            "loading",
+            "Connecting to MongoDB catalog..."
+        );
+
+
+        const response =
+            await fetch(
+                DESTINATION_API,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `API returned ${response.status}`
+            );
+
+        }
+
+
+        const destinations =
+            await response.json();
+
+
+        console.log(
+            "MongoDB destinations:",
+            destinations
+        );
+
+
+        /*
+        Remove server-rendered cards.
+        */
+
+        const grid =
+            document.getElementById(
+                "destinationGrid"
+            );
+
+
+        grid.innerHTML = "";
+
+
+        /*
+        Create cards from MongoDB.
+        */
+
+        destinations.forEach(
+            (destination, index) => {
+
+                createCard(
+                    normalizeDestination(
+                        destination,
+                        index
+                    ),
+                    false
+                );
+
+            }
+        );
+
+
+        populateCountryFilter();
+
+        updateKPIs();
+
+        applyFilters();
+
+
+        setAPIStatus(
+            "success",
+            `${destinations.length} destinations loaded from MongoDB ✅`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "MongoDB Load Error:",
+            error
+        );
+
+
+        /*
+        Keep existing Flask/Jinja cards
+        if FastAPI is not running.
+        */
+
+        updateKPIs();
+
+        applyFilters();
+
+
+        setAPIStatus(
+            "error",
+            "FastAPI/MongoDB connection failed. Make sure FastAPI is running on port 8000."
+        );
+
+    }
+
+}
+
+
+/*
+=============================================================
+NORMALIZE DESTINATION
+=============================================================
+*/
+
+function normalizeDestination(
+    destination,
+    index = 0
+) {
+
+    return {
+
+        id:
+            destination.id ||
+            destination._id ||
+            `mongo-${Date.now()}-${index}`,
+
+        name:
+            destination.name ||
+            "Unnamed Destination",
+
+        country:
+            destination.country ||
+            "Unknown",
+
+        rating:
+            Number(
+                destination.rating || 0
+            ),
+
+        price:
+            destination.price ||
+            "₹0",
+
+        image:
+            destination.image ||
+            "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80",
+
+        description:
+            destination.description ||
+            destination.desc ||
+            "No description available.",
+
+        status:
+            destination.status ||
+            "active",
+
+        code:
+            destination.code ||
+            `HUB-${String(index + 1).padStart(4, "0")}`
+
+    };
+
+}
+
+
+/*
+=============================================================
+API STATUS
+=============================================================
+*/
+
+function setAPIStatus(
+    type,
+    message
+) {
+
+    const box =
+        document.getElementById(
+            "apiStatus"
+        );
+
+
+    if (!box)
+        return;
+
+
+    box.classList.remove(
+        "hidden",
+        "bg-emerald-50",
+        "text-emerald-700",
+        "border-emerald-200",
+        "bg-red-50",
+        "text-red-700",
+        "border-red-200",
+        "bg-blue-50",
+        "text-blue-700",
+        "border-blue-200"
+    );
+
+
+    if (type === "success") {
+
+        box.classList.add(
+            "bg-emerald-50",
+            "text-emerald-700",
+            "border-emerald-200"
+        );
+
+    }
+
+    else if (type === "error") {
+
+        box.classList.add(
+            "bg-red-50",
+            "text-red-700",
+            "border-red-200"
+        );
+
+    }
+
+    else {
+
+        box.classList.add(
+            "bg-blue-50",
+            "text-blue-700",
+            "border-blue-200"
+        );
+
+    }
+
+
+    box.textContent = message;
+
+}
+
+
+/*
+=============================================================
+COUNTRY FILTER
+=============================================================
+*/
+
+function populateCountryFilter() {
+
+    const countries =
+        new Set();
+
+
+    document
+        .querySelectorAll(
+            ".destination-card"
+        )
+        .forEach(card => {
+
+            const country =
+                card.dataset.country;
+
+            if (country)
+                countries.add(country);
+
+        });
+
+
+    const select =
+        document.getElementById(
+            "countryFilter"
+        );
+
+
+    const currentValue =
+        select.value;
+
+
+    select.innerHTML =
+        `<option value="">🌍 All Countries</option>`;
+
+
+    Array
+        .from(countries)
+        .sort()
+        .forEach(country => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                country;
+
+
+            option.textContent =
+                "🌍 " +
+                country
+                    .split(" ")
+                    .map(word =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1)
+                    )
+                    .join(" ");
+
+
+            select.appendChild(
+                option
+            );
+
+        });
+
+
+    if (
+        Array
+            .from(select.options)
+            .some(
+                option =>
+                    option.value === currentValue
+            )
+    ) {
+
+        select.value =
+            currentValue;
+
+    }
+
+}
+
+
+/*
+=============================================================
+FILTER
+=============================================================
+*/
+
+function applyFilters() {
+
+    const search =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    const country =
+        document
+            .getElementById("countryFilter")
+            .value
+            .toLowerCase();
+
+
+    const status =
+        document
+            .getElementById("statusFilter")
+            .value;
+
+
+    const rating =
+        document
+            .getElementById("ratingFilter")
+            .value;
+
+
+    const minPrice =
+        parseFloat(
+            document
+                .getElementById("minPrice")
+                .value
+        ) || 0;
+
+
+    const maxPriceInput =
+        parseFloat(
+            document
+                .getElementById("maxPrice")
+                .value
+        );
+
+
+    const maxPrice =
+        isNaN(maxPriceInput)
+            ? Infinity
+            : maxPriceInput;
+
+
+    const cards =
+        Array.from(
+            document.querySelectorAll(
+                ".destination-card"
+            )
+        );
+
+
+    let visible = [];
+
+
+    cards.forEach(card => {
+
+        const name =
+            card.dataset.name || "";
+
+
+        const cardCountry =
+            card.dataset.country || "";
+
+
+        const description =
+            card.dataset.description || "";
+
+
+        const code =
+            card.dataset.code || "";
+
+
+        const cardRating =
+            parseFloat(
+                card.dataset.rating || 0
+            );
+
+
+        const cardPrice =
+            parseFloat(
+                card.dataset.price || 0
+            );
+
+
+        const cardStatus =
+            card.dataset.status ||
+            "active";
+
+
+        const favorite =
+            card.dataset.favorite ===
+            "true";
+
+
+        const searchMatch =
+            !search ||
+            name.includes(search) ||
+            cardCountry.includes(search) ||
+            description.includes(search) ||
+            code.includes(search);
+
+
+        const countryMatch =
+            !country ||
+            cardCountry === country;
+
+
+        const statusMatch =
+            !status ||
+            cardStatus === status;
+
+
+        const ratingMatch =
+            !rating ||
+            cardRating >=
+            parseFloat(rating);
+
+
+        const priceMatch =
+            cardPrice >= minPrice &&
+            cardPrice <= maxPrice;
+
+
+        const favoriteMatch =
+            !favoritesOnly ||
+            favorite;
+
+
+        const matched =
+            searchMatch &&
+            countryMatch &&
+            statusMatch &&
+            ratingMatch &&
+            priceMatch &&
+            favoriteMatch;
+
+
+        card.style.display =
+            matched
+                ? ""
+                : "none";
+
+
+        if (matched)
+            visible.push(card);
+
+    });
+
+
+    sortCards(visible);
+
+
+    document
+        .getElementById("resultCount")
+        .textContent =
+        `${visible.length} destination${visible.length !== 1 ? "s" : ""} found`;
+
+
+    document
+        .getElementById("kpiVisible")
+        .textContent =
+        visible.length;
+
+
+    document
+        .getElementById("noResults")
+        .classList.toggle(
+            "hidden",
+            visible.length !== 0
+        );
+
+}
+
+
+/*
+=============================================================
+SORT
+=============================================================
+*/
+
+function sortCards(cards) {
+
+    const type =
+        document
+            .getElementById("sortFilter")
+            .value;
+
+
+    const grid =
+        document.getElementById(
+            "destinationGrid"
+        );
+
+
+    cards.sort((a, b) => {
+
+        const nameA =
+            a.dataset.name || "";
+
+
+        const nameB =
+            b.dataset.name || "";
+
+
+        const ratingA =
+            parseFloat(
+                a.dataset.rating || 0
+            );
+
+
+        const ratingB =
+            parseFloat(
+                b.dataset.rating || 0
+            );
+
+
+        const priceA =
+            parseFloat(
+                a.dataset.price || 0
+            );
+
+
+        const priceB =
+            parseFloat(
+                b.dataset.price || 0
+            );
+
+
+        const createdA =
+            parseInt(
+                a.dataset.created || 0
+            );
+
+
+        const createdB =
+            parseInt(
+                b.dataset.created || 0
+            );
+
+
+        switch (type) {
+
+            case "nameAsc":
+                return nameA.localeCompare(
+                    nameB
+                );
+
+            case "nameDesc":
+                return nameB.localeCompare(
+                    nameA
+                );
+
+            case "ratingHigh":
+                return ratingB - ratingA;
+
+            case "ratingLow":
+                return ratingA - ratingB;
+
+            case "priceHigh":
+                return priceB - priceA;
+
+            case "priceLow":
+                return priceA - priceB;
+
+            case "newest":
+                return createdB - createdA;
+
+            default:
+                return 0;
+
+        }
+
+    });
+
+
+    cards.forEach(card => {
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+/*
+=============================================================
+KPI
+=============================================================
+*/
+
+function updateKPIs() {
+
+    const cards =
+        document.querySelectorAll(
+            ".destination-card"
+        );
+
+
+    const countries =
+        new Set();
+
+
+    let totalRating = 0;
+
+    let active = 0;
+
+    let favorites = 0;
+
+
+    cards.forEach(card => {
+
+        if (card.dataset.country)
+            countries.add(
+                card.dataset.country
+            );
+
+
+        totalRating +=
+            parseFloat(
+                card.dataset.rating || 0
+            );
+
+
+        if (
+            card.dataset.status ===
+            "active"
+        )
+            active++;
+
+
+        if (
+            card.dataset.favorite ===
+            "true"
+        )
+            favorites++;
+
+    });
+
+
+    document.getElementById(
+        "kpiTotal"
+    ).textContent =
+        cards.length;
+
+
+    document.getElementById(
+        "kpiCountries"
+    ).textContent =
+        countries.size;
+
+
+    document.getElementById(
+        "kpiRating"
+    ).textContent =
+        cards.length
+            ? (
+                totalRating /
+                cards.length
+            ).toFixed(1)
+            : "0";
+
+
+    document.getElementById(
+        "kpiActive"
+    ).textContent =
+        active;
+
+
+    document.getElementById(
+        "kpiFavorites"
+    ).textContent =
+        favorites;
+
+}
+
+
+/*
+=============================================================
+FAVORITE
+=============================================================
+*/
+
+function toggleFavorite(button) {
+
+    const card =
+        button.closest(
+            ".destination-card"
+        );
+
+
+    const isFavorite =
+        card.dataset.favorite ===
+        "true";
+
+
+    card.dataset.favorite =
+        isFavorite
+            ? "false"
+            : "true";
+
+
+    button.textContent =
+        isFavorite
+            ? "♡"
+            : "♥";
+
+
+    button.classList.toggle(
+        "text-rose-500",
+        !isFavorite
+    );
+
+
+    updateKPIs();
+
+    applyFilters();
+
+    showToast(
+        isFavorite
+            ? "Removed from favorites"
+            : "Added to favorites"
+    );
+
+}
+
+
+/*
+=============================================================
+FAVORITES FILTER
+=============================================================
+*/
+
+function showFavoritesOnly() {
+
+    favoritesOnly =
+        !favoritesOnly;
+
+
+    const button =
+        document.getElementById(
+            "favoriteFilterBtn"
+        );
+
+
+    button.classList.toggle(
+        "bg-rose-500",
+        favoritesOnly
+    );
+
+
+    button.classList.toggle(
+        "text-white",
+        favoritesOnly
+    );
+
+
+    applyFilters();
+
+}
+
+
+/*
+=============================================================
+VIEW
+=============================================================
+*/
+
+function viewDestination(button) {
+
+    const card =
+        button.closest(
+            ".destination-card"
+        );
+
+
+    document.getElementById(
+        "viewImage"
+    ).src =
+        card.querySelector(
+            ".destination-image"
+        ).src;
+
+
+    document.getElementById(
+        "viewName"
+    ).textContent =
+        card.querySelector(
+            ".destination-name"
+        ).textContent.trim();
+
+
+    document.getElementById(
+        "viewCountry"
+    ).textContent =
+        card.dataset.country
+            .toUpperCase();
+
+
+    document.getElementById(
+        "viewRating"
+    ).textContent =
+        "⭐ " +
+        card.dataset.rating;
+
+
+    document.getElementById(
+        "viewDescription"
+    ).textContent =
+        card.querySelector(
+            ".destination-description"
+        ).textContent.trim();
+
+
+    document.getElementById(
+        "viewPrice"
+    ).textContent =
+        card.querySelector(
+            ".destination-price"
+        ).textContent.trim();
+
+
+    openViewModal();
+
+}
+
+
+function openViewModal() {
+
+    document
+        .getElementById("viewModal")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("viewModal")
+        .classList.add("flex");
+
+}
+
+
+function closeViewModal() {
+
+    document
+        .getElementById("viewModal")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("viewModal")
+        .classList.remove("flex");
+
+}
+
+
+/*
+=============================================================
+ADD MODAL
+=============================================================
+*/
+
+function openAddModal() {
+
+    document
+        .getElementById("destinationForm")
+        .reset();
+
+
+    document
+        .getElementById("editCardId")
+        .value = "";
+
+
+    document
+        .getElementById("modalTitle")
+        .textContent =
+        "Add Destination";
+
+
+    document
+        .getElementById("saveDestinationBtn")
+        .textContent =
+        "Save Destination";
+
+
+    document
+        .getElementById("previewBox")
+        .classList.add("hidden");
+
+
+    openModal();
+
+}
+
+
+function openModal() {
+
+    document
+        .getElementById("destinationModal")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("destinationModal")
+        .classList.add("flex");
+
+}
+
+
+function closeModal() {
+
+    document
+        .getElementById("destinationModal")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("destinationModal")
+        .classList.remove("flex");
+
+}
+
+
+/*
+=============================================================
+EDIT
+=============================================================
+*/
+
+function editDestination(button) {
+
+    const card =
+        button.closest(
+            ".destination-card"
+        );
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Destination";
+
+
+    document.getElementById(
+        "saveDestinationBtn"
+    ).textContent =
+        "Update Destination";
+
+
+    document.getElementById(
+        "editCardId"
+    ).value =
+        card.dataset.id;
+
+
+    document.getElementById(
+        "destName"
+    ).value =
+        card.querySelector(
+            ".destination-name"
+        ).textContent.trim();
+
+
+    document.getElementById(
+        "destCountry"
+    ).value =
+        card.dataset.country;
+
+
+    document.getElementById(
+        "destRating"
+    ).value =
+        card.dataset.rating;
+
+
+    document.getElementById(
+        "destPrice"
+    ).value =
+        card.querySelector(
+            ".destination-price"
+        ).textContent.trim();
+
+
+    document.getElementById(
+        "destDescription"
+    ).value =
+        card.querySelector(
+            ".destination-description"
+        ).textContent.trim();
+
+
+    document.getElementById(
+        "destImage"
+    ).value =
+        card.querySelector(
+            ".destination-image"
+        ).src;
+
+
+    document.getElementById(
+        "destStatus"
+    ).value =
+        card.dataset.status;
+
+
+    document.getElementById(
+        "destCode"
+    ).value =
+        card.dataset.code || "";
+
+
+    previewImage();
+
+    openModal();
+
+}
+
+
+/*
+=============================================================
+CREATE / UPDATE FORM
+=============================================================
+*/
+
+document
+    .getElementById("destinationForm")
+    .addEventListener(
+        "submit",
+        async function (e) {
+
+            e.preventDefault();
+
+
+            const id =
+                document.getElementById(
+                    "editCardId"
+                ).value;
+
+
+            const data = {
+
+                name:
+                    document.getElementById(
+                        "destName"
+                    ).value.trim(),
+
+                country:
+                    document.getElementById(
+                        "destCountry"
+                    ).value.trim(),
+
+                rating:
+                    parseFloat(
+                        document.getElementById(
+                            "destRating"
+                        ).value
+                    ),
+
+                price:
+                    document.getElementById(
+                        "destPrice"
+                    ).value.trim(),
+
+                image:
+                    document.getElementById(
+                        "destImage"
+                    ).value.trim(),
+
+                description:
+                    document.getElementById(
+                        "destDescription"
+                    ).value.trim(),
+
+                status:
+                    document.getElementById(
+                        "destStatus"
+                    ).value,
+
+                code:
+                    document.getElementById(
+                        "destCode"
+                    ).value.trim()
+
+            };
+
+
+            if (!data.name ||
+                !data.country ||
+                !data.price ||
+                !data.image ||
+                !data.description) {
+
+                showToast(
+                    "Please fill all required fields"
+                );
+
+                return;
+
+            }
+
+
+            const saveButton =
+                document.getElementById(
+                    "saveDestinationBtn"
+                );
+
+
+            saveButton.disabled = true;
+
+            saveButton.textContent =
+                id
+                    ? "Updating..."
+                    : "Saving...";
+
+
+            try {
+
+                /*
+                =================================================
+                UPDATE
+                =================================================
+                */
+
+                if (id) {
+
+                    const response =
+                        await fetch(
+                            `${DESTINATION_API}${encodeURIComponent(id)}`,
+                            {
+
+                                method: "PUT",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(data)
+
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.detail ||
+                            "Update failed"
+                        );
+
+                    }
+
+
+                    showToast(
+                        "Destination updated in MongoDB ✅"
+                    );
+
+                }
+
+
+                /*
+                =================================================
+                CREATE
+                =================================================
+                */
+
+                else {
+
+                    const response =
+                        await fetch(
+                            DESTINATION_API,
+                            {
+
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify(data)
+
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.detail ||
+                            "Creation failed"
+                        );
+
+                    }
+
+
+                    console.log(
+                        "MongoDB created:",
+                        result
+                    );
+
+
+                    showToast(
+                        "Destination saved to MongoDB successfully ✅"
+                    );
+
+                }
+
+
+                closeModal();
+
+
+                await loadDestinationsFromMongoDB();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Destination API Error:",
+                    error
+                );
+
+
+                showToast(
+                    error.message ||
+                    "FastAPI connection failed ❌"
+                );
+
+            }
+
+
+            saveButton.disabled = false;
+
+            saveButton.textContent =
+                id
+                    ? "Update Destination"
+                    : "Save Destination";
+
+        }
+    );
+
+
+/*
+=============================================================
+CREATE CARD
+=============================================================
+*/
+
+function createCard(
+    data,
+    prepend = true
+) {
+
+    const grid =
+        document.getElementById(
+            "destinationGrid"
+        );
+
+
+    const id =
+        data.id ||
+        "new-" + Date.now();
+
+
+    const card =
+        document.createElement("div");
+
+
+    card.className =
+        "destination-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300";
+
+
+    card.dataset.id =
+        id;
+
+
+    card.dataset.name =
+        data.name.toLowerCase();
+
+
+    card.dataset.country =
+        data.country.toLowerCase();
+
+
+    card.dataset.description =
+        data.description.toLowerCase();
+
+
+    card.dataset.code =
+        data.code.toLowerCase();
+
+
+    card.dataset.rating =
+        data.rating;
+
+
+    card.dataset.price =
+        String(data.price)
+            .replace(/[₹,$]/g, "")
+            .replace(/,/g, "");
+
+
+    card.dataset.status =
+        data.status;
+
+
+    card.dataset.favorite =
+        "false";
+
+
+    card.dataset.created =
+        Date.now();
+
+
+    const safeImage =
+        escapeHTML(data.image);
+
+
+    card.innerHTML = `
+
+        <div class="h-52 relative overflow-hidden">
+
+            <img
+                src="${safeImage}"
+                class="destination-image w-full h-full object-cover hover:scale-105 transition duration-500"
+                onerror="this.src='https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80'">
+
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent"></div>
+
+
+            <label class="absolute top-3 left-3">
+
+                <input
+                    type="checkbox"
+                    class="destination-checkbox w-4 h-4 rounded accent-blue-600"
+                    onchange="updateSelection()">
+
+            </label>
+
+
+            <button
+                onclick="toggleFavorite(this)"
+                class="favorite-btn absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur rounded-xl shadow-sm text-slate-400 hover:text-rose-500 transition">
+
+                ♡
+
+            </button>
+
+
+            <div
+                class="absolute bottom-3 right-3 px-2.5 py-1 bg-white/95 rounded-lg text-xs font-bold">
+
+                ⭐ ${escapeHTML(data.rating)}
+
+            </div>
+
+
+            <div
+                class="absolute bottom-3 left-3 bg-slate-950/75 backdrop-blur text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase">
+
+                🌍 ${escapeHTML(data.country)}
+
+            </div>
+
+
+            <div class="absolute top-14 left-3">
+
+                ${
+                    data.status === "active"
+
+                    ? `
+                        <span class="status-badge px-2 py-1 bg-emerald-500/90 text-white rounded-lg text-[9px] font-bold">
+                            ● ACTIVE
+                        </span>
+                    `
+
+                    : `
+                        <span class="status-badge px-2 py-1 bg-slate-700/90 text-white rounded-lg text-[9px] font-bold">
+                            INACTIVE
+                        </span>
+                    `
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="p-5">
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div>
+
+                    <h3
+                        class="destination-name font-bold text-base text-slate-900">
+
+                        ${escapeHTML(data.name)}
+
+                    </h3>
+
+
+                    <p
+                        class="destination-code text-[10px] text-slate-400 mt-1">
+
+                        ${escapeHTML(data.code)}
+
+                    </p>
+
+                </div>
+
+
+                <div class="relative">
+
+                    <button
+                        onclick="toggleMenu(this)"
+                        class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500">
+
+                        ⋮
+
+                    </button>
+
+
+                    <div
+                        class="action-menu hidden absolute right-0 top-9 z-20 w-36 bg-white border border-slate-200 rounded-xl shadow-xl p-1">
+
+                        <button
+                            onclick="viewDestination(this)"
+                            class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                            👁 View
+
+                        </button>
+
+
+                        <button
+                            onclick="editDestination(this)"
+                            class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                            ✎ Edit
+
+                        </button>
+
+
+                        <button
+                            onclick="duplicateDestination(this)"
+                            class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                            ⧉ Duplicate
+
+                        </button>
+
+
+                        <button
+                            onclick="toggleStatus(this)"
+                            class="w-full text-left px-3 py-2 hover:bg-slate-50 rounded-lg text-[11px]">
+
+                            ◉ Toggle Status
+
+                        </button>
+
+
+                        <button
+                            onclick="deleteDestination(this)"
+                            class="w-full text-left px-3 py-2 hover:bg-red-50 text-red-600 rounded-lg text-[11px]">
+
+                            🗑 Delete
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <p
+                class="destination-description text-xs text-slate-500 leading-relaxed mt-3 line-clamp-2">
+
+                ${escapeHTML(data.description)}
+
+            </p>
+
+
+            <div
+                class="flex items-end justify-between mt-5 pt-4 border-t border-slate-100">
+
+                <div>
+
+                    <span
+                        class="text-[9px] uppercase font-bold text-slate-400">
+
+                        Starting From
+
+                    </span>
+
+
+                    <div
+                        class="destination-price text-lg font-black text-slate-900">
+
+                        ${escapeHTML(data.price)}
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    onclick="viewDestination(this)"
+                    class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-semibold">
+
+                    View →
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    if (prepend)
+        grid.prepend(card);
+    else
+        grid.appendChild(card);
+
+}
+
+
+/*
+=============================================================
+UPDATE LOCAL CARD
+=============================================================
+*/
+
+function updateCard(
+    id,
+    data
+) {
+
+    const card =
+        document.querySelector(
+            `.destination-card[data-id="${CSS.escape(id)}"]`
+        );
+
+
+    if (!card)
+        return;
+
+
+    card.dataset.name =
+        data.name.toLowerCase();
+
+
+    card.dataset.country =
+        data.country.toLowerCase();
+
+
+    card.dataset.description =
+        data.description.toLowerCase();
+
+
+    card.dataset.code =
+        data.code.toLowerCase();
+
+
+    card.dataset.rating =
+        data.rating;
+
+
+    card.dataset.price =
+        data.price.replace(
+            /[₹,$]/g,
+            ""
+        );
+
+
+    card.dataset.status =
+        data.status;
+
+
+    card.querySelector(
+        ".destination-name"
+    ).textContent =
+        data.name;
+
+
+    card.querySelector(
+        ".destination-code"
+    ).textContent =
+        data.code;
+
+
+    card.querySelector(
+        ".destination-description"
+    ).textContent =
+        data.description;
+
+
+    card.querySelector(
+        ".destination-price"
+    ).textContent =
+        data.price;
+
+
+    card.querySelector(
+        ".destination-image"
+    ).src =
+        data.image;
+
+
+    const rating =
+        card.querySelector(
+            ".absolute.bottom-3.right-3"
+        );
+
+
+    if (rating) {
+
+        rating.textContent =
+            "⭐ " +
+            data.rating;
+
+    }
+
+
+    updateStatusBadge(
+        card,
+        data.status
+    );
+
+}
+
+
+/*
+=============================================================
+DELETE DESTINATION
+=============================================================
+*/
+
+async function deleteDestination(
+    button
+) {
+
+    const card =
+        button.closest(
+            ".destination-card"
+        );
+
+
+    const id =
+        card.dataset.id;
+
+
+    const name =
+        card.querySelector(
+            ".destination-name"
+        ).textContent.trim();
+
+
+    if (!id ||
+        id.startsWith("new-"))
+    {
+
+        card.remove();
+
+        updateKPIs();
+
+        applyFilters();
+
+        return;
+
+    }
+
+
+    if (!confirm(
+        `Delete "${name}"?\n\nThis will permanently delete it from MongoDB.`
+    ))
+        return;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${DESTINATION_API}${encodeURIComponent(id)}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.detail ||
+                "Delete failed"
+            );
+
+        }
+
+
+        card.remove();
+
+
+        updateKPIs();
+
+        applyFilters();
+
+
+        showToast(
+            `${name} deleted from MongoDB ✅`
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Delete failed ❌"
+        );
+
+    }
+
+}
+
+
+/*
+=============================================================
+DUPLICATE
+=============================================================
+*/
+
+async function duplicateDestination(
+    button
+) {
+
+    const card =
+        button.closest(
+            ".destination-card"
+        );
+
+
+    const data = {
+
+        name:
+            card.querySelector(
+                ".destination-name"
+            ).textContent.trim() +
+            " Copy",
+
+        country:
+            card.dataset.country,
+
+        rating:
+            parseFloat(
+                card.dataset.rating || 0
+            ),
+
+        price:
+            card.querySelector(
+                ".destination-price"
+            ).textContent.trim(),
+
+        image:
+            card.querySelector(
+                ".destination-image"
+            ).src,
+
+        description:
+            card.querySelector(
+                ".destination-description"
+            ).textContent.trim(),
+
+        status:
+            card.dataset.status,
+
+        code:
+            card.dataset.code + "-COPY"
+
+    };
+
+
+    try {
+
+        const response =
+            await fetch(
+                DESTINATION_API,
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.detail ||
+                "Duplicate failed"
+            );
+
+        }
+
+
+        await loadDestinationsFromMongoDB();
+
+
+        showToast(
+            "Destination duplicated in MongoDB ✅"
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Duplicate failed ❌"
+        );
+
+    }
+
+}
+
+
+/*
+=============================================================
+STATUS
+=============================================================
+*/
+
+async function toggleStatus(
+    button
+) {
+
+    const card =
+        button.closest(
+            ".destination-card"
+        );
+
+
+    const id =
+        card.dataset.id;
+
+
+    const current =
+        card.dataset.status;
+
+
+    const next =
+        current === "active"
+            ? "inactive"
+            : "active";
+
+
+    /*
+    Get current data.
+    */
+
+    const data = {
+
+        name:
+            card.querySelector(
+                ".destination-name"
+            ).textContent.trim(),
+
+        country:
+            card.dataset.country,
+
+        rating:
+            parseFloat(
+                card.dataset.rating || 0
+            ),
+
+        price:
+            card.querySelector(
+                ".destination-price"
+            ).textContent.trim(),
+
+        image:
+            card.querySelector(
+                ".destination-image"
+            ).src,
+
+        description:
+            card.querySelector(
+                ".destination-description"
+            ).textContent.trim(),
+
+        status:
+            next,
+
+        code:
+            card.dataset.code
+
+    };
+
+
+    if (
+        id &&
+        !id.startsWith("new-")
+    ) {
+
+        try {
+
+            const response =
+                await fetch(
+                    `${DESTINATION_API}${encodeURIComponent(id)}`,
+                    {
+
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(data)
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.detail ||
+                    "Status update failed"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                error.message ||
+                "Status update failed ❌"
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    card.dataset.status =
+        next;
+
+
+    updateStatusBadge(
+        card,
+        next
+    );
+
+
+    updateKPIs();
+
+    applyFilters();
+
+
+    showToast(
+        `Destination ${next} ✅`
+    );
+
+}
+
+
+/*
+=============================================================
+STATUS BADGE
+=============================================================
+*/
+
+function updateStatusBadge(
+    card,
+    status
+) {
+
+    const badge =
+        card.querySelector(
+            ".status-badge"
+        );
+
+
+    if (!badge)
+        return;
+
+
+    if (status === "active") {
+
+        badge.textContent =
+            "● ACTIVE";
+
+
+        badge.className =
+            "status-badge px-2 py-1 bg-emerald-500/90 text-white rounded-lg text-[9px] font-bold";
+
+    } else {
+
+        badge.textContent =
+            "INACTIVE";
+
+
+        badge.className =
+            "status-badge px-2 py-1 bg-slate-700/90 text-white rounded-lg text-[9px] font-bold";
+
+    }
+
+}
+
+
+/*
+=============================================================
+BULK SELECTION
+=============================================================
+*/
+
+function updateSelection() {
+
+    const selected =
+        document.querySelectorAll(
+            ".destination-checkbox:checked"
+        );
+
+
+    document.getElementById(
+        "selectedCount"
+    ).textContent =
+        `${selected.length} selected`;
+
+
+    const bulkBar =
+        document.getElementById(
+            "bulkBar"
+        );
+
+
+    bulkBar.classList.toggle(
+        "hidden",
+        selected.length === 0
+    );
+
+
+    bulkBar.classList.toggle(
+        "flex",
+        selected.length !== 0
+    );
+
+}
+
+
+function selectAllVisible() {
+
+    document
+        .querySelectorAll(
+            ".destination-card"
+        )
+        .forEach(card => {
+
+            if (
+                card.style.display !==
+                "none"
+            ) {
+
+                const checkbox =
+                    card.querySelector(
+                        ".destination-checkbox"
+                    );
+
+
+                if (checkbox)
+                    checkbox.checked =
+                        true;
+
+            }
+
+        });
+
+
+    updateSelection();
+
+}
+
+
+function clearSelection() {
+
+    document
+        .querySelectorAll(
+            ".destination-checkbox"
+        )
+        .forEach(
+            cb =>
+                cb.checked = false
+        );
+
+
+    updateSelection();
+
+}
+
+
+function getSelectedCards() {
+
+    return Array.from(
+        document.querySelectorAll(
+            ".destination-checkbox:checked"
+        )
+    ).map(
+        cb =>
+            cb.closest(
+                ".destination-card"
+            )
+    );
+
+}
+
+
+/*
+=============================================================
+BULK ACTIVATE
+=============================================================
+*/
+
+async function bulkActivate() {
+
+    await bulkChangeStatus(
+        "active"
+    );
+
+}
+
+
+/*
+=============================================================
+BULK DEACTIVATE
+=============================================================
+*/
+
+async function bulkDeactivate() {
+
+    await bulkChangeStatus(
+        "inactive"
+    );
+
+}
+
+
+/*
+=============================================================
+BULK STATUS
+=============================================================
+*/
+
+async function bulkChangeStatus(
+    status
+) {
+
+    const selected =
+        getSelectedCards();
+
+
+    if (!selected.length)
+        return;
+
+
+    try {
+
+        for (const card of selected) {
+
+            const id =
+                card.dataset.id;
+
+
+            if (
+                !id ||
+                id.startsWith("new-")
+            )
+                continue;
+
+
+            const data = {
+
+                name:
+                    card.querySelector(
+                        ".destination-name"
+                    ).textContent.trim(),
+
+                country:
+                    card.dataset.country,
+
+                rating:
+                    parseFloat(
+                        card.dataset.rating || 0
+                    ),
+
+                price:
+                    card.querySelector(
+                        ".destination-price"
+                    ).textContent.trim(),
+
+                image:
+                    card.querySelector(
+                        ".destination-image"
+                    ).src,
+
+                description:
+                    card.querySelector(
+                        ".destination-description"
+                    ).textContent.trim(),
+
+                status:
+                    status,
+
+                code:
+                    card.dataset.code
+
+            };
+
+
+            const response =
+                await fetch(
+                    `${DESTINATION_API}${encodeURIComponent(id)}`,
+                    {
+
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(data)
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const result =
+                    await response.json();
+
+                throw new Error(
+                    result.detail ||
+                    "Bulk update failed"
+                );
+
+            }
+
+        }
+
+
+        selected.forEach(card => {
+
+            card.dataset.status =
+                status;
+
+
+            updateStatusBadge(
+                card,
+                status
+            );
+
+        });
+
+
+        clearSelection();
+
+        updateKPIs();
+
+        applyFilters();
+
+
+        showToast(
+            `Selected destinations ${status} ✅`
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Bulk operation failed ❌"
+        );
+
+    }
+
+}
+
+
+/*
+=============================================================
+BULK DELETE
+=============================================================
+*/
+
+async function bulkDelete() {
+
+    const selected =
+        getSelectedCards();
+
+
+    if (!selected.length)
+        return;
+
+
+    if (!confirm(
+        `Delete ${selected.length} destinations from MongoDB?`
+    ))
+        return;
+
+
+    try {
+
+        for (const card of selected) {
+
+            const id =
+                card.dataset.id;
+
+
+            if (
+                !id ||
+                id.startsWith("new-")
+            ) {
+
+                card.remove();
+
+                continue;
+
+            }
+
+
+            const response =
+                await fetch(
+                    `${DESTINATION_API}${encodeURIComponent(id)}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const result =
+                    await response.json();
+
+                throw new Error(
+                    result.detail ||
+                    "Delete failed"
+                );
+
+            }
+
+
+            card.remove();
+
+        }
+
+
+        clearSelection();
+
+        updateKPIs();
+
+        applyFilters();
+
+
+        showToast(
+            `${selected.length} destinations deleted ✅`
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            error.message ||
+            "Bulk delete failed ❌"
+        );
+
+    }
+
+}
+
+
+/*
+=============================================================
+MENU
+=============================================================
+*/
+
+function toggleMenu(button) {
+
+    const menu =
+        button.nextElementSibling;
+
+
+    document
+        .querySelectorAll(
+            ".action-menu"
+        )
+        .forEach(m => {
+
+            if (m !== menu)
+                m.classList.add(
+                    "hidden"
+                );
+
+        });
+
+
+    menu.classList.toggle(
+        "hidden"
+    );
+
+}
+
+
+document.addEventListener(
+    "click",
+    e => {
+
+        if (
+            !e.target.closest(
+                ".action-menu"
+            ) &&
+            !e.target.closest(
+                "button"
+            )
+        ) {
+
+            document
+                .querySelectorAll(
+                    ".action-menu"
+                )
+                .forEach(m =>
+                    m.classList.add(
+                        "hidden"
+                    )
+                );
+
+        }
+
+    }
+);
+
+
+/*
+=============================================================
+IMAGE PREVIEW
+=============================================================
+*/
+
+function previewImage() {
+
+    const url =
+        document.getElementById(
+            "destImage"
+        ).value.trim();
+
+
+    const box =
+        document.getElementById(
+            "previewBox"
+        );
+
+
+    const image =
+        document.getElementById(
+            "imagePreview"
+        );
+
+
+    if (!url) {
+
+        box.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    image.src =
+        url;
+
+
+    image.onload =
+        () =>
+            box.classList.remove(
+                "hidden"
+            );
+
+
+    image.onerror =
+        () =>
+            box.classList.add(
+                "hidden"
+            );
+
+}
+
+
+/*
+=============================================================
+SEARCH CLEAR
+=============================================================
+*/
+
+function clearSearch() {
+
+    document.getElementById(
+        "searchInput"
+    ).value = "";
+
+
+    applyFilters();
+
+}
+
+
+/*
+=============================================================
+RESET FILTERS
+=============================================================
+*/
+
+function resetFilters() {
+
+    document.getElementById(
+        "searchInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "countryFilter"
+    ).value = "";
+
+
+    document.getElementById(
+        "statusFilter"
+    ).value = "";
+
+
+    document.getElementById(
+        "ratingFilter"
+    ).value = "";
+
+
+    document.getElementById(
+        "sortFilter"
+    ).value = "default";
+
+
+    document.getElementById(
+        "minPrice"
+    ).value = "";
+
+
+    document.getElementById(
+        "maxPrice"
+    ).value = "";
+
+
+    favoritesOnly =
+        false;
+
+
+    document
+        .getElementById(
+            "favoriteFilterBtn"
+        )
+        .classList.remove(
+            "bg-rose-500",
+            "text-white"
+        );
+
+
+    applyFilters();
+
+
+    showToast(
+        "All filters cleared"
+    );
+
+}
+
+
+/*
+=============================================================
+VIEW MODE
+=============================================================
+*/
+
+function setView(view) {
+
+    const grid =
+        document.getElementById(
+            "destinationGrid"
+        );
+
+
+    if (view === "list") {
+
+        grid.classList.add(
+            "list-mode"
+        );
+
+
+        document.getElementById(
+            "listBtn"
+        ).className =
+            "w-10 h-10 bg-blue-50 text-blue-600 rounded-xl";
+
+
+        document.getElementById(
+            "gridBtn"
+        ).className =
+            "w-10 h-10 bg-slate-50 text-slate-500 rounded-xl";
+
+    }
+
+    else {
+
+        grid.classList.remove(
+            "list-mode"
+        );
+
+
+        document.getElementById(
+            "gridBtn"
+        ).className =
+            "w-10 h-10 bg-blue-50 text-blue-600 rounded-xl";
+
+
+        document.getElementById(
+            "listBtn"
+        ).className =
+            "w-10 h-10 bg-slate-50 text-slate-500 rounded-xl";
+
+    }
+
+}
+
+
+/*
+=============================================================
+REFRESH
+=============================================================
+*/
+
+async function refreshCatalog() {
+
+    const icon =
+        document.getElementById(
+            "refreshIcon"
+        );
+
+
+    icon.classList.add(
+        "animate-spin"
+    );
+
+
+    await loadDestinationsFromMongoDB();
+
+
+    setTimeout(() => {
+
+        icon.classList.remove(
+            "animate-spin"
+        );
+
+    }, 500);
+
+
+    showToast(
+        "Catalog refreshed from MongoDB"
+    );
+
+}
+
+
+/*
+=============================================================
+EXPORT CSV
+=============================================================
+*/
+
+function exportCSV() {
+
+    const cards =
+        document.querySelectorAll(
+            ".destination-card"
+        );
+
+
+    let csv =
+        "ID,Destination,Country,Code,Rating,Price,Status\n";
+
+
+    cards.forEach(card => {
+
+        csv +=
+
+            `"${csvEscape(card.dataset.id)}",` +
+
+            `"${csvEscape(
+                card.querySelector(
+                    ".destination-name"
+                ).textContent.trim()
+            )}",` +
+
+            `"${csvEscape(
+                card.dataset.country
+            )}",` +
+
+            `"${csvEscape(
+                card.dataset.code
+            )}",` +
+
+            `"${csvEscape(
+                card.dataset.rating
+            )}",` +
+
+            `"${csvEscape(
+                card.querySelector(
+                    ".destination-price"
+                ).textContent.trim()
+            )}",` +
+
+            `"${csvEscape(
+                card.dataset.status
+            )}"\n`;
+
+    });
+
+
+    downloadFile(
+        csv,
+        "aman-destinations.csv",
+        "text/csv"
+    );
+
+
+    showToast(
+        "CSV exported successfully"
+    );
+
+}
+
+
+/*
+=============================================================
+EXPORT JSON
+=============================================================
+*/
+
+function exportJSON() {
+
+    const cards =
+        document.querySelectorAll(
+            ".destination-card"
+        );
+
+
+    const data =
+        Array.from(cards).map(
+            card => ({
+
+                id:
+                    card.dataset.id,
+
+                name:
+                    card.querySelector(
+                        ".destination-name"
+                    ).textContent.trim(),
+
+                country:
+                    card.dataset.country,
+
+                code:
+                    card.dataset.code,
+
+                rating:
+                    Number(
+                        card.dataset.rating
+                    ),
+
+                price:
+                    card.querySelector(
+                        ".destination-price"
+                    ).textContent.trim(),
+
+                status:
+                    card.dataset.status,
+
+                favorite:
+                    card.dataset.favorite ===
+                    "true",
+
+                image:
+                    card.querySelector(
+                        ".destination-image"
+                    ).src,
+
+                description:
+                    card.querySelector(
+                        ".destination-description"
+                    ).textContent.trim()
+
+            })
+        );
+
+
+    downloadFile(
+        JSON.stringify(
+            data,
+            null,
+            2
+        ),
+        "aman-destinations.json",
+        "application/json"
+    );
+
+
+    showToast(
+        "JSON exported successfully"
+    );
+
+}
+
+
+/*
+=============================================================
+DOWNLOAD
+=============================================================
+*/
+
+function downloadFile(
+    content,
+    name,
+    type
+) {
+
+    const blob =
+        new Blob(
+            [content],
+            { type }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        name;
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+/*
+=============================================================
+CSV ESCAPE
+=============================================================
+*/
+
+function csvEscape(value) {
+
+    return String(
+        value ?? ""
+    ).replace(
+        /"/g,
+        '""'
+    );
+
+}
+
+
+/*
+=============================================================
+HTML ESCAPE
+=============================================================
+*/
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/*
+=============================================================
+TOAST
+=============================================================
+*/
+
+function showToast(
+    message
+) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    document.getElementById(
+        "toastMessage"
+    ).textContent =
+        message;
+
+
+    toast.classList.remove(
+        "translate-y-20",
+        "opacity-0"
+    );
+
+
+    setTimeout(() => {
+
+        toast.classList.add(
+            "translate-y-20",
+            "opacity-0"
+        );
+
+    }, 3000);
+
+}
+
+
+/*
+=============================================================
+ESCAPE KEY
+=============================================================
+*/
+
+document.addEventListener(
+    "keydown",
+    e => {
+
+        if (
+            e.key === "Escape"
+        ) {
+
+            closeModal();
+
+            closeViewModal();
+
+        }
+
+    }
+);
+
+
+/*
+=============================================================
+MODAL OUTSIDE CLICK
+=============================================================
+*/
+
+document
+    .getElementById(
+        "destinationModal"
+    )
+    .addEventListener(
+        "click",
+        function (e) {
+
+            if (
+                e.target === this
+            )
+                closeModal();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "viewModal"
+    )
+    .addEventListener(
+        "click",
+        function (e) {
+
+            if (
+                e.target === this
+            )
+                closeViewModal();
+
+        }
+    );
+
+</script>
+
+{% endblock %}

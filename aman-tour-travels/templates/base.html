@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Aman Tour & Travels | Enterprise Platform{% endblock %}</title>
+    <!-- Tailwind CSS v4 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="h-full bg-slate-100/70 text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- ENTERPRISE HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
+        <div class="h-16 px-4 lg:px-8 flex items-center justify-between">
+            
+            <!-- BRAND -->
+            <div class="flex items-center gap-6">
+                <a href="{{ url_for('home') }}" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-sm shadow-blue-500/20 group-hover:scale-105 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-white">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0L7 10m5-5 5 5M4 19h16"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-bold text-slate-900 text-sm tracking-tight leading-tight">Aman Tour</h1>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded-md border border-blue-200/50">Enterprise</span>
+                        </div>
+                        <p class="text-[10px] tracking-widest text-slate-500 font-semibold">TOUR & TRAVELS</p>
+                    </div>
+                </a>
+
+                <!-- NAVIGATION LINKS -->
+                <nav class="hidden lg:flex items-center gap-1 pl-6 border-l border-slate-200">
+                    <a href="{{ url_for('home') }}" class="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition">Home</a>
+                    <a href="{{ url_for('tours') }}" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Tours</a>
+                    <a href="{{ url_for('destinations') }}" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Destinations</a>
+                    {% if session.get('token') %}
+                    <a href="{{ url_for('dashboard') }}" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Dashboard</a>
+                    <a href="{{ url_for('customers') }}" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Customers</a>
+                    <a href="{{ url_for('analytics') }}" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Analytics</a>
+                    {% endif %}
+                    <a href="{{ url_for('home') }}#about" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">About</a>
+                </nav>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div class="hidden md:flex items-center w-[340px] h-10 bg-slate-50 border border-slate-200 rounded-xl px-3 gap-2 focus-within:bg-white focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-600/10 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-slate-400">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/>
+                </svg>
+                <input type="text" placeholder="Search destinations, tours, bookings..." class="bg-transparent outline-none w-full text-xs text-slate-800 placeholder:text-slate-400 font-medium">
+            </div>
+
+            <!-- RIGHT ACTIONS -->
+            <div class="flex items-center gap-3">
+                <button class="relative w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 transition">
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9a6 6 0 0 0-12 0v.75a8.967 8.967 0 0 1-2.31 6.022c1.733.64 3.56 1.085 5.454 1.31m5.713 0a24.255 24.255 0 0 1-5.713 0m5.713 0a3 3 0 1 1-5.713 0"/>
+                    </svg>
+                </button>
+
+                <div class="h-5 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+
+                {% if session.get('token') %}
+                <div class="flex items-center gap-3">
+                    <a href="{{ url_for('profile') }}" class="flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-blue-600 transition">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-xs">AD</div>
+                        <span class="hidden sm:inline">Profile</span>
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl transition">Sign Out</a>
+                </div>
+                {% else %}
+                <div class="flex items-center gap-2.5">
+                    <a href="{{ url_for('login') }}" class="hidden sm:inline-flex text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-2 transition">Login</a>
+                    <a href="{{ url_for('register') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-sm shadow-blue-500/20 transition">Get Started</a>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </header>
+
+    <!-- FLASH NOTIFICATIONS (FIXED LOOP SYNTAX) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="fixed top-20 right-4 z-50 space-y-2 max-w-sm w-full">
+          {% for category, message in messages %}
+            <div class="p-4 rounded-xl text-xs font-semibold shadow-lg border flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-200 
+              {% if category == 'success' %} bg-emerald-50 text-emerald-800 border-emerald-200
+              {% elif category == 'warning' %} bg-amber-50 text-amber-800 border-amber-200
+              {% else %} bg-blue-50 text-blue-800 border-blue-200 {% endif %}">
+              <span>{{ message }}</span>
+              <button onclick="this.parentElement.remove()" class="ml-2 text-slate-400 hover:text-slate-700">✕</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-16 flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ENTERPRISE FOOTER -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center text-white text-xs font-bold">A</div>
+                        <span class="font-bold text-slate-900 text-sm">Aman Tour & Travels Inc.</span>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed max-w-sm">
+                        Enterprise travel management, node inventory allocation, and automated corporate fulfillment workflows.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-xs text-slate-900 uppercase tracking-wider mb-3">Platform</h3>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="{{ url_for('tours') }}" class="text-slate-500 hover:text-blue-600 transition">Tour Management</a></li>
+                        <li><a href="{{ url_for('destinations') }}" class="text-slate-500 hover:text-blue-600 transition">Destinations</a></li>
+                        <li><a href="{{ url_for('bookings') }}" class="text-slate-500 hover:text-blue-600 transition">Booking Engine</a></li>
+                        <li><a href="{{ url_for('analytics') }}" class="text-slate-500 hover:text-blue-600 transition">Travel Analytics</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-xs text-slate-900 uppercase tracking-wider mb-3">Company</h3>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#about" class="text-slate-500 hover:text-blue-600 transition">About Us</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-blue-600 transition">Careers <span class="text-[10px] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded ml-1 font-semibold">Hiring</span></a></li>
+                        <li><a href="#contact" class="text-slate-500 hover:text-blue-600 transition">Contact Support</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-blue-600 transition">Partner Network</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-xs text-slate-900 uppercase tracking-wider mb-3">Compliance</h3>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#" class="text-slate-500 hover:text-blue-600 transition">Security & Trust</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-blue-600 transition">Privacy Policy</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-blue-600 transition">Terms & Conditions</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-blue-600 transition">API Documentation</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-xs text-slate-400">&copy; 2026 Aman Tour & Travels, Inc. All rights reserved.</p>
+                <div class="flex items-center gap-6 text-xs text-slate-500 font-medium">
+                    <a href="#" class="hover:text-blue-600 transition">Instagram</a>
+                    <a href="#" class="hover:text-blue-600 transition">LinkedIn</a>
+                    <a href="#" class="hover:text-blue-600 transition">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
