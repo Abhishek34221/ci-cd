@@ -1,4 +1,4 @@
-
+```yaml
 name: Build and Push Docker Images
 
 on:
@@ -13,6 +13,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Show Repository Structure
+        run: |
+          echo "===== ROOT ====="
+          ls -la
+
+          echo "===== FASTAPI ====="
+          ls -la ./FastApi_mognodb || true
+
+          echo "===== AMAN TOUR ====="
+          ls -la ./aman-tour-travels || true
+
+          echo "===== ALL DOCKERFILES ====="
+          find . -type f -name "Dockerfile" -print
+
+      - name: Verify Backend Dockerfile
+        run: |
+          test -f ./FastApi_mognodb/Dockerfile
+
+      - name: Verify Frontend Dockerfile
+        run: |
+          test -f ./aman-tour-travels/Dockerfile
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -41,4 +63,4 @@ jobs:
         run: |
           docker push \
             ${{ secrets.DOCKERHUB_USERNAME }}/aman-tour-frontend:latest
-
+```
