@@ -1,0 +1,54 @@
+﻿services:
+
+  mongodb:
+    image: mongo:7.0
+    container_name: aman-mongodb
+    restart: unless-stopped
+    volumes:
+      - aman_mongodb_data:/data/db
+    networks:
+      - aman-network
+
+  backend:
+    build:
+      context: ./FastApi_mognodb
+      dockerfile: Dockerfile
+    image: abhi23631/aman-tour-backend:v1
+    container_name: aman-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DB: fastapi_db
+      JWT_SECRET_KEY: change-this-jwt-secret
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+    depends_on:
+      - mongodb
+    networks:
+      - aman-network
+
+  frontend:
+    build:
+      context: ./aman-tour-travels
+      dockerfile: Dockerfile
+    image: abhi23631/aman-tour-frontend:v1
+    container_name: aman-frontend
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    environment:
+      FASTAPI_URL: http://backend:8000
+      SECRET_KEY: change-this-flask-secret
+    depends_on:
+      - backend
+    networks:
+      - aman-network
+
+volumes:
+  aman_mongodb_data:
+
+networks:
+  aman-network:
+    driver: bridge
