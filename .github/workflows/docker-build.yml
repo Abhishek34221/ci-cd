@@ -1,4 +1,4 @@
-yaml
+```yaml
 name: Build and Push Docker Images
 
 on:
@@ -12,40 +12,26 @@ jobs:
 
     steps:
 
-      # ==========================================
-      # CHECKOUT CODE
-      # ==========================================
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # ==========================================
-      # CHECK PROJECT STRUCTURE
-      # ==========================================
       - name: Check Project Structure
         run: |
           echo "Current directory:"
           pwd
-
           echo ""
           echo "Root files and folders:"
           ls -la
-
           echo ""
           echo "All Dockerfiles:"
           find . -type f -name "Dockerfile" -print
 
-      # ==========================================
-      # LOGIN TO DOCKER HUB
-      # ==========================================
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # ==========================================
-      # VERIFY BACKEND DOCKERFILE
-      # ==========================================
       - name: Verify Backend Dockerfile
         run: |
           if [ ! -f "./FastApi_mognodb/Dockerfile" ]; then
@@ -53,12 +39,8 @@ jobs:
             echo "Expected location: ./FastApi_mognodb/Dockerfile"
             exit 1
           fi
-
           echo "Backend Dockerfile found."
 
-      # ==========================================
-      # VERIFY FRONTEND DOCKERFILE
-      # ==========================================
       - name: Verify Frontend Dockerfile
         run: |
           if [ ! -f "./aman-tour-travels/Dockerfile" ]; then
@@ -66,47 +48,31 @@ jobs:
             echo "Expected location: ./aman-tour-travels/Dockerfile"
             exit 1
           fi
-
           echo "Frontend Dockerfile found."
 
-      # ==========================================
-      # BUILD BACKEND IMAGE
-      # ==========================================
       - name: Build Backend Image
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/aman-tour-backend:latest \
             ./FastApi_mognodb
 
-      # ==========================================
-      # BUILD FRONTEND IMAGE
-      # ==========================================
       - name: Build Frontend Image
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/aman-tour-frontend:latest \
             ./aman-tour-travels
 
-      # ==========================================
-      # SHOW DOCKER IMAGES
-      # ==========================================
       - name: Show Docker Images
         run: |
           docker images
 
-      # ==========================================
-      # PUSH BACKEND IMAGE
-      # ==========================================
       - name: Push Backend Image
         run: |
           docker push \
             ${{ secrets.DOCKERHUB_USERNAME }}/aman-tour-backend:latest
 
-      # ==========================================
-      # PUSH FRONTEND IMAGE
-      # ==========================================
       - name: Push Frontend Image
         run: |
           docker push \
             ${{ secrets.DOCKERHUB_USERNAME }}/aman-tour-frontend:latest
-
+```
